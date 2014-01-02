@@ -4,7 +4,7 @@
 	 
 <!-- Based on an example kindly provided by George Christman and Lance Java. -->
 
-<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd" xmlns:p="tapestry:parameter">
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
 <head>
 	<link rel="stylesheet" type="text/css" href="${context:css/examples/js.css}"/>
 	<style type="text/css">

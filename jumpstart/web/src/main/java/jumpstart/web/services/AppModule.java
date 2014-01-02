@@ -201,8 +201,7 @@ public class AppModule {
 			}
 		};
 
-		configuration.add(new CoercionTuple<java.util.Date, DateMidnight>(java.util.Date.class, DateMidnight.class,
-				toDateMidnight));
+		configuration.add(new CoercionTuple<>(java.util.Date.class, DateMidnight.class, toDateMidnight));
 
 		// From DateMidnight to java.util.Date
 
@@ -213,8 +212,7 @@ public class AppModule {
 			}
 		};
 
-		configuration.add(new CoercionTuple<DateMidnight, java.util.Date>(DateMidnight.class, java.util.Date.class,
-				fromDateMidnight));
+		configuration.add(new CoercionTuple<>(DateMidnight.class, java.util.Date.class, fromDateMidnight));
 
 		// From java.util.Date to LocalDate
 
@@ -225,8 +223,7 @@ public class AppModule {
 			}
 		};
 
-		configuration.add(new CoercionTuple<java.util.Date, LocalDate>(java.util.Date.class, LocalDate.class,
-				toLocalDate));
+		configuration.add(new CoercionTuple<>(java.util.Date.class, LocalDate.class, toLocalDate));
 
 		// From LocalDate to java.util.Date
 
@@ -237,8 +234,7 @@ public class AppModule {
 			}
 		};
 
-		configuration.add(new CoercionTuple<LocalDate, java.util.Date>(LocalDate.class, java.util.Date.class,
-				fromLocalDate));
+		configuration.add(new CoercionTuple<>(LocalDate.class, java.util.Date.class, fromLocalDate));
 	}
 
 	// Tell Tapestry how its BeanDisplay and BeanEditor can handle the JodaTime types.
