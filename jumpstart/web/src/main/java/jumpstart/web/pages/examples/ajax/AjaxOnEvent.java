@@ -47,7 +47,7 @@ public class AjaxOnEvent {
 		}
 	}
 
-	Object onFirstNameChanged(@RequestParameter("param") String firstName) {
+	Object onFirstNameChanged(@RequestParameter(value = "param", allowBlank = true) String firstName) {
 		if (firstName == null) {
 			firstName = "";
 		}
@@ -55,7 +55,7 @@ public class AjaxOnEvent {
 		return request.isXHR() ? nameZone.getBody() : null;
 	}
 
-	Object onLastNameChanged(@RequestParameter("param") String lastName) {
+	Object onLastNameChanged(@RequestParameter(value = "param", allowBlank = true) String lastName) {
 		if (lastName == null) {
 			lastName = "";
 		}
