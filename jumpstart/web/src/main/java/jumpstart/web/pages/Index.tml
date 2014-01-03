@@ -23,13 +23,13 @@
 			<a href="http://jumpstart.doublenegative.com.au/troubleshooting.html">Troubleshooting</a>
 			<a href="http://jumpstart.doublenegative.com.au/faq.html">FAQ</a>
 			<a href="http://jumpstart.doublenegative.com.au/bugs_enhancements.html">Bugs and Enhancements</a>
-			<a href="http://jumpstart.doublenegative.com.au/jumpstart7/" style="font-weight: bold; font-size: larger;">JumpStart 7 Preview</a>
+			<a href="http://jumpstart.doublenegative.com.au/jumpstart7/" style="font-weight: bold; color: #e0ffe0;">JumpStart 7 Preview</a>
 		</div>
 	</td>
 	</tr>
 	<tr>
 	<td>
-		<div id="titlesbar" style="position: relative;">
+		<div id="titlesbar">
 			<div id="titles">
 				<h1>JumpStart 6.10.4</h1>
 				<h2>For Tapestry 5.3.7</h2>
