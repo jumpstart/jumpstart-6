@@ -8,6 +8,7 @@
 	<property name="java.main.dir" value="src/main/java"/>
 	<property name="java.tests.dir" value="src/test/java"/>
 	<property name="resources.main.dir" value="src/main/resources"/>
+	<property name="main.tmp.dir" value="src/main/tmp"/>
 
 	<property name="target.dir" value="target"/>
 	<property name="target.classes.dir" value="${target.dir}/classes"/>
@@ -205,8 +206,14 @@
 		<!-- For tapestry-kaptcha -->
 		<!--
 		<get dest="${lib.runtime.dir}/kaptcha-2.3.jar" usetimestamp="true" src="https://nexus.sourcesense.com/nexus/content/repositories/public/com/google/code/kaptcha/2.3/kaptcha-2.3.jar" />				
-		-->
 		<get dest="${lib.runtime.dir}/kaptcha-2.3.jar" usetimestamp="true" src="http://savant.inversoft.org/com/google/code/kaptcha/kaptcha/2.3/kaptcha-2.3.jar" />				
+		-->
+		<!-- For tapestry-kaptcha -->
+		<mkdir dir="${main.tmp.dir}"/>
+		<get dest="${main.tmp.dir}/kaptcha-2.3.2.zip" usetimestamp="true" src="http://kaptcha.googlecode.com/files/kaptcha-2.3.2.zip" />
+		<unzip dest="${main.tmp.dir}/kaptcha-2.3.2" src="${main.tmp.dir}/kaptcha-2.3.2.zip" />
+		<copy todir="${lib.runtime.dir}" file="${main.tmp.dir}/kaptcha-2.3.2/kaptcha-2.3.2.jar" />
+		<delete dir="${main.tmp.dir}"/>
 		<!-- For tapestry-upload -->
 		<get dest="${lib.runtime.dir}/commons-io-2.0.1.jar" usetimestamp="true" src="${maven.repo.root}/commons-io/commons-io/2.0.1/commons-io-2.0.1.jar" />
 
