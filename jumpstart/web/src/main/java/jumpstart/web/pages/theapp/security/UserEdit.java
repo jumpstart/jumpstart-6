@@ -16,7 +16,7 @@ import jumpstart.web.base.theapp.SimpleBasePage;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.ValueEncoder;
-import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
@@ -50,7 +50,8 @@ public class UserEdit extends SimpleBasePage {
 
 	// Work fields
 
-	// This carries version through the redirect that follows a server-side validation failure.
+	// This carries version through the redirect that follows a server-side
+	// validation failure.
 	@Persist(PersistenceConstants.FLASH)
 	private Integer versionFlash;
 
@@ -73,7 +74,7 @@ public class UserEdit extends SimpleBasePage {
 
 	// Generally useful bits and pieces
 
-	@Component(id = "form")
+	@InjectComponent
 	private Form form;
 
 	@Inject
@@ -111,7 +112,8 @@ public class UserEdit extends SimpleBasePage {
 		// Handle null person in the template.
 
 		// If the form has errors then we're redisplaying after a redirect.
-		// Form will restore your input values but it's up to us to restore Hidden values.
+		// Form will restore your input values but it's up to us to restore
+		// Hidden values.
 
 		if (form.getHasErrors()) {
 			if (user != null) {
@@ -132,8 +134,7 @@ public class UserEdit extends SimpleBasePage {
 	private User findUser(Long userId) {
 		try {
 			return securityFinderService.findUser(userId);
-		}
-		catch (DoesNotExistException e) {
+		} catch (DoesNotExistException e) {
 			// Handle null user in the template
 			return null;
 		}
@@ -148,8 +149,7 @@ public class UserEdit extends SimpleBasePage {
 
 		try {
 			securityManagerService.changeUser(user);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			form.recordError(interpretBusinessServicesExceptionForChange(e));
 		}
 	}
@@ -194,7 +194,8 @@ public class UserEdit extends SimpleBasePage {
 
 		if (form.isValid()) {
 
-			// Delete the user from the database unless they've been modified elsewhere
+			// Delete the user from the database unless they've been modified
+			// elsewhere
 
 			try {
 				UserRole userRole = securityFinderService.findUserRole(id);
@@ -203,8 +204,7 @@ public class UserEdit extends SimpleBasePage {
 					return;
 				}
 				securityManagerService.removeUserRole(userRole);
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				form.recordError(interpretBusinessServicesExceptionForRemove(e));
 				return;
 			}
@@ -212,7 +212,8 @@ public class UserEdit extends SimpleBasePage {
 	}
 
 	private Link createLinkToThisPage() {
-		Link thisPageLink = pageRenderLinkSource.createPageRenderLinkWithContext(this.getClass(), onPassivate());
+		Link thisPageLink = pageRenderLinkSource
+				.createPageRenderLinkWithContext(this.getClass(), onPassivate());
 		return thisPageLink;
 	}
 
@@ -228,8 +229,7 @@ public class UserEdit extends SimpleBasePage {
 			Long id = new Long(keyAsString);
 			try {
 				return securityFinderService.findUserRole(id);
-			}
-			catch (DoesNotExistException e) {
+			} catch (DoesNotExistException e) {
 				return null;
 			}
 		}
@@ -252,11 +252,13 @@ public class UserEdit extends SimpleBasePage {
 	}
 
 	public EnumValueEncoder<PageStyle> getPageStyleEncoder() {
-		return new EnumValueEncoder<PageStyle>(typeCoercer, User.PageStyle.class);
+		return new EnumValueEncoder<PageStyle>(typeCoercer,
+				User.PageStyle.class);
 	}
 
 	public boolean isUserExists() {
-		// We get the user in onPrepareFromForm, so this test will work correctly ONLY if it is in or below the Form on
+		// We get the user in onPrepareFromForm, so this test will work
+		// correctly ONLY if it is in or below the Form on
 		// the page.
 		return user != null;
 	}

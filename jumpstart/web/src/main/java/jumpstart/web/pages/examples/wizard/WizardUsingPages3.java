@@ -5,7 +5,7 @@ import jumpstart.web.base.examples.wizard.WizardConversationalPage;
 import jumpstart.web.pages.Index;
 import jumpstart.web.state.examples.wizard.CreditRequest;
 
-import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.components.Form;
@@ -30,7 +30,7 @@ public class WizardUsingPages3 extends WizardConversationalPage {
 
 	// Generally useful bits and pieces
 
-	@Component(id = "form")
+	@InjectComponent
 	private Form form;
 
 	// The code
@@ -46,14 +46,16 @@ public class WizardUsingPages3 extends WizardConversationalPage {
 		saveCreditRequestToConversation(creditRequest);
 
 		try {
-			// In the real world we would probably submit it to the business layer here
-			// but we're not, so let's simulate a busy period then complete the request!
+			// In the real world we would probably submit it to the business
+			// layer here
+			// but we're not, so let's simulate a busy period then complete the
+			// request!
 
 			sleep(5000);
 			creditRequest.complete();
-		}
-		catch (Exception e) {
-			// Display the cause. In a real system we would try harder to get a user-friendly message.
+		} catch (Exception e) {
+			// Display the cause. In a real system we would try harder to get a
+			// user-friendly message.
 			form.recordError(ExceptionUtil.getRootCauseMessage(e));
 		}
 	}
@@ -61,10 +63,12 @@ public class WizardUsingPages3 extends WizardConversationalPage {
 	Object onSuccess() {
 		endConversation();
 
-		// In the real world we would now have a credit request in the database and the success page would want its
+		// In the real world we would now have a credit request in the database
+		// and the success page would want its
 		// id instead of these two fields.
 
-		nextPage.set(creditRequest.getAmount(), creditRequest.getApplicantName());
+		nextPage.set(creditRequest.getAmount(),
+				creditRequest.getApplicantName());
 		return nextPage;
 	}
 
@@ -81,8 +85,7 @@ public class WizardUsingPages3 extends WizardConversationalPage {
 	private void sleep(long millis) {
 		try {
 			Thread.sleep(millis);
-		}
-		catch (InterruptedException e) {
+		} catch (InterruptedException e) {
 			// Ignore
 		}
 	}

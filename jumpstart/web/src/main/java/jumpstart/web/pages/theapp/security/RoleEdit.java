@@ -14,7 +14,7 @@ import jumpstart.web.base.theapp.SimpleBasePage;
 
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.PersistenceConstants;
-import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
@@ -43,7 +43,8 @@ public class RoleEdit extends SimpleBasePage {
 
 	// Work fields
 
-	// This carries version through the redirect that follows a server-side validation failure.
+	// This carries version through the redirect that follows a server-side
+	// validation failure.
 	@Persist(PersistenceConstants.FLASH)
 	private Integer versionFlash;
 
@@ -60,7 +61,7 @@ public class RoleEdit extends SimpleBasePage {
 
 	// Generally useful bits and pieces
 
-	@Component(id = "form")
+	@InjectComponent
 	private Form form;
 
 	@Inject
@@ -95,7 +96,8 @@ public class RoleEdit extends SimpleBasePage {
 		// Handle null person in the template.
 
 		// If the form has errors then we're redisplaying after a redirect.
-		// Form will restore your input values but it's up to us to restore Hidden values.
+		// Form will restore your input values but it's up to us to restore
+		// Hidden values.
 
 		if (form.getHasErrors()) {
 			if (role != null) {
@@ -116,8 +118,7 @@ public class RoleEdit extends SimpleBasePage {
 	private Role findRole(Long roleId) {
 		try {
 			return securityFinderService.findRole(roleId);
-		}
-		catch (DoesNotExistException e) {
+		} catch (DoesNotExistException e) {
 			// Handle null role in the template
 			return null;
 		}
@@ -132,8 +133,7 @@ public class RoleEdit extends SimpleBasePage {
 
 		try {
 			securityManagerService.changeRole(role);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			form.recordError(interpretBusinessServicesExceptionForChange(e));
 		}
 	}
@@ -172,7 +172,8 @@ public class RoleEdit extends SimpleBasePage {
 
 		if (form.isValid()) {
 
-			// Delete the user from the database unless they've been modified elsewhere
+			// Delete the user from the database unless they've been modified
+			// elsewhere
 
 			try {
 				UserRole userRole = securityFinderService.findUserRole(id);
@@ -181,8 +182,7 @@ public class RoleEdit extends SimpleBasePage {
 					return;
 				}
 				securityManagerService.removeUserRole(userRole);
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				form.recordError(interpretBusinessServicesExceptionForRemove(e));
 				return;
 			}
@@ -190,12 +190,14 @@ public class RoleEdit extends SimpleBasePage {
 	}
 
 	private Link createLinkToThisPage() {
-		Link thisPageLink = pageRenderLinkSource.createPageRenderLinkWithContext(this.getClass(), onPassivate());
+		Link thisPageLink = pageRenderLinkSource
+				.createPageRenderLinkWithContext(this.getClass(), onPassivate());
 		return thisPageLink;
 	}
 
 	public boolean isRoleExists() {
-		// We get the role in onPrepareFromForm, so this test will work correctly ONLY if it is in or below the Form on
+		// We get the role in onPrepareFromForm, so this test will work
+		// correctly ONLY if it is in or below the Form on
 		// the page.
 		return role != null;
 	}

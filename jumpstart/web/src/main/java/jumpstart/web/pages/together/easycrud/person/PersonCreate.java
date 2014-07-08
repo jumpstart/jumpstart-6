@@ -7,14 +7,15 @@ import jumpstart.business.domain.person.iface.IPersonManagerServiceLocal;
 import jumpstart.util.ExceptionUtil;
 import jumpstart.web.pages.together.easycrud.Persons;
 
-import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.components.BeanEditForm;
 
 public class PersonCreate {
 
-	private final String demoModeStr = System.getProperty("jumpstart.demo-mode");
+	private final String demoModeStr = System
+			.getProperty("jumpstart.demo-mode");
 
 	// Screen fields
 
@@ -28,7 +29,7 @@ public class PersonCreate {
 
 	// Generally useful bits and pieces
 
-	@Component(id = "personForm")
+	@InjectComponent("personForm")
 	private BeanEditForm personForm;
 
 	@EJB
@@ -47,20 +48,22 @@ public class PersonCreate {
 
 	void onValidateFromPersonForm() {
 		if (demoModeStr != null && demoModeStr.equals("true")) {
-			personForm.recordError("Sorry, but this function is not allowed in Demo mode.");
+			personForm
+					.recordError("Sorry, but this function is not allowed in Demo mode.");
 			return;
 		}
 
 		try {
 			personManagerService.createPerson(person);
-		}
-		catch (Exception e) {
-			// Display the cause. In a real system we would try harder to get a user-friendly message.
+		} catch (Exception e) {
+			// Display the cause. In a real system we would try harder to get a
+			// user-friendly message.
 			personForm.recordError(ExceptionUtil.getRootCauseMessage(e));
 		}
 	}
 
-	// PersonForm bubbles up SUCCESS or FAILURE when it is submitted, depending on whether VALIDATE records an error
+	// PersonForm bubbles up SUCCESS or FAILURE when it is submitted, depending
+	// on whether VALIDATE records an error
 
 	Object onSuccess() {
 		return indexPage;

@@ -9,8 +9,8 @@ import jumpstart.util.ExceptionUtil;
 import jumpstart.web.components.CustomForm;
 
 import org.apache.tapestry5.PersistenceConstants;
-import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Import;
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
@@ -30,7 +30,8 @@ public class TotalControlEdit1 {
 
 	// Work fields
 
-	// This carries version through the redirect that follows a server-side validation failure.
+	// This carries version through the redirect that follows a server-side
+	// validation failure.
 	@Persist(PersistenceConstants.FLASH)
 	private Integer versionFlash;
 
@@ -41,7 +42,7 @@ public class TotalControlEdit1 {
 
 	// Generally useful bits and pieces
 
-	@Component(id = "person")
+	@InjectComponent("person")
 	private CustomForm form;
 
 	@EJB
@@ -52,13 +53,15 @@ public class TotalControlEdit1 {
 
 	// The code
 
-	// onPassivate() is called by Tapestry to get the activation context to put in the URL.
+	// onPassivate() is called by Tapestry to get the activation context to put
+	// in the URL.
 
 	Long onPassivate() {
 		return personId;
 	}
 
-	// onActivate() is called by Tapestry to pass in the activation context from the URL.
+	// onActivate() is called by Tapestry to pass in the activation context from
+	// the URL.
 
 	void onActivate(Long personId) {
 		this.personId = personId;
@@ -70,7 +73,8 @@ public class TotalControlEdit1 {
 		person = findPerson(personId);
 
 		// If the form has errors then we're redisplaying after a redirect.
-		// Form will restore your input values but it's up to us to restore Hidden values.
+		// Form will restore your input values but it's up to us to restore
+		// Hidden values.
 
 		if (form.getHasErrors()) {
 			person.setVersion(versionFlash);
@@ -93,9 +97,9 @@ public class TotalControlEdit1 {
 
 		try {
 			personManagerService.changePerson(person);
-		}
-		catch (Exception e) {
-			// Display the cause. In a real system we would try harder to get a user-friendly message.
+		} catch (Exception e) {
+			// Display the cause. In a real system we would try harder to get a
+			// user-friendly message.
 			form.recordError(ExceptionUtil.getRootCauseMessage(e));
 		}
 	}
@@ -119,9 +123,9 @@ public class TotalControlEdit1 {
 
 		if (person == null) {
 			if (personId < 4) {
-				throw new IllegalStateException("Database data has not been set up!");
-			}
-			else {
+				throw new IllegalStateException(
+						"Database data has not been set up!");
+			} else {
 				throw new Exception("Person " + personId + " does not exist.");
 			}
 		}

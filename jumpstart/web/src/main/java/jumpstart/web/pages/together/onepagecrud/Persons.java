@@ -15,7 +15,7 @@ import jumpstart.web.model.together.PersonPagedDataSource;
 
 import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.PersistenceConstants;
-import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.grid.GridDataSource;
@@ -24,7 +24,8 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 
 public class Persons {
 
-	private final String demoModeStr = System.getProperty("jumpstart.demo-mode");
+	private final String demoModeStr = System
+			.getProperty("jumpstart.demo-mode");
 
 	private enum Mode {
 		CREATE, REVIEW, UPDATE;
@@ -55,7 +56,8 @@ public class Persons {
 
 	// Work fields
 
-	// This carries version through the redirect that follows a server-side validation failure.
+	// This carries version through the redirect that follows a server-side
+	// validation failure.
 	@Persist(PersistenceConstants.FLASH)
 	private Integer versionFlash;
 
@@ -67,10 +69,10 @@ public class Persons {
 	@EJB
 	private IPersonManagerServiceLocal personManagerService;
 
-	@Component
+	@InjectComponent
 	private CustomForm createForm;
 
-	@Component
+	@InjectComponent
 	private CustomForm updateForm;
 
 	@Inject
@@ -78,45 +80,43 @@ public class Persons {
 
 	// The code
 
-	// onPassivate() is called by Tapestry to get the activation context to put in the URL.
+	// onPassivate() is called by Tapestry to get the activation context to put
+	// in the URL.
 
 	Object[] onPassivate() {
 
 		if (editorMode == null) {
 			return null;
-		}
-		else if (editorMode == Mode.CREATE) {
+		} else if (editorMode == Mode.CREATE) {
 			return new Object[] { editorMode };
-		}
-		else if (editorMode == Mode.REVIEW || editorMode == Mode.UPDATE) {
+		} else if (editorMode == Mode.REVIEW || editorMode == Mode.UPDATE) {
 			return new Object[] { editorMode, editorPersonId };
-		}
-		else {
+		} else {
 			throw new IllegalStateException(editorMode.toString());
 		}
 
 	}
 
-	// onActivate() is called by Tapestry to pass in the activation context from the URL.
+	// onActivate() is called by Tapestry to pass in the activation context from
+	// the URL.
 
 	void onActivate(EventContext ec) {
 
 		if (ec.getCount() == 0) {
 			editorMode = null;
 			editorPersonId = null;
-		}
-		else if (ec.getCount() == 1) {
+		} else if (ec.getCount() == 1) {
 			editorMode = ec.get(Mode.class, 0);
 			editorPersonId = null;
-		}
-		else {
+		} else {
 			editorMode = ec.get(Mode.class, 0);
 			editorPersonId = ec.get(Long.class, 1);
 		}
 
 	}
 
-	// setupRender() is called by Tapestry right before it starts rendering the page.
+	// setupRender() is called by Tapestry right before it starts rendering the
+	// page.
 
 	void setupRender() {
 		listPersons = new PersonPagedDataSource(personFinderService);
@@ -125,10 +125,10 @@ public class Persons {
 			if (editorPersonId == null) {
 				editorPerson = null;
 				// Handle null editorPerson in the template.
-			}
-			else {
+			} else {
 				if (editorPerson == null) {
-					editorPerson = personFinderService.findPerson(editorPersonId);
+					editorPerson = personFinderService
+							.findPerson(editorPersonId);
 					// Handle null editorPerson in the template.
 				}
 			}
@@ -154,7 +154,8 @@ public class Persons {
 		editorPersonId = null;
 	}
 
-	// Component "createForm" bubbles up the PREPARE event when it is rendered or submitted
+	// Component "createForm" bubbles up the PREPARE event when it is rendered
+	// or submitted
 
 	void onPrepareFromCreateForm() throws Exception {
 		editorMode = Mode.CREATE;
@@ -172,20 +173,22 @@ public class Persons {
 		}
 
 		if (demoModeStr != null && demoModeStr.equals("true")) {
-			createForm.recordError("Sorry, but Create is not allowed in Demo mode.");
+			createForm
+					.recordError("Sorry, but Create is not allowed in Demo mode.");
 			return;
 		}
 
 		try {
 			editorPerson = personManagerService.createPerson(editorPerson);
-		}
-		catch (Exception e) {
-			// Display the cause. In a real system we would try harder to get a user-friendly message.
+		} catch (Exception e) {
+			// Display the cause. In a real system we would try harder to get a
+			// user-friendly message.
 			createForm.recordError(ExceptionUtil.getRootCauseMessage(e));
 		}
 	}
 
-	// Component "createForm" bubbles up SUCCESS or FAILURE when it is submitted, depending on whether VALIDATE
+	// Component "createForm" bubbles up SUCCESS or FAILURE when it is
+	// submitted, depending on whether VALIDATE
 	// records an error
 
 	void onSuccessFromCreateForm() {
@@ -222,7 +225,8 @@ public class Persons {
 		this.editorPersonId = personId;
 	}
 
-	// Component "updateForm" bubbles up the PREPARE_FOR_RENDER event during form render
+	// Component "updateForm" bubbles up the PREPARE_FOR_RENDER event during
+	// form render
 
 	void onPrepareForRenderFromUpdateForm() {
 		editorMode = Mode.UPDATE;
@@ -231,7 +235,8 @@ public class Persons {
 		// Handle null editorPerson in the template.
 
 		// If the form has errors then we're redisplaying after a redirect.
-		// Form will restore your input values but it's up to us to restore Hidden values.
+		// Form will restore your input values but it's up to us to restore
+		// Hidden values.
 
 		if (updateForm.getHasErrors()) {
 			if (editorPerson != null) {
@@ -240,7 +245,8 @@ public class Persons {
 		}
 	}
 
-	// Component "updateForm" bubbles up the PREPARE_FOR_SUBMIT event during form submission
+	// Component "updateForm" bubbles up the PREPARE_FOR_SUBMIT event during
+	// form submission
 
 	void onPrepareForSubmitFromUpdateForm() {
 		editorMode = Mode.UPDATE;
@@ -250,7 +256,8 @@ public class Persons {
 
 		if (editorPerson == null) {
 			editorPerson = new Person();
-			updateForm.recordError("Person has been deleted by another process.");
+			updateForm
+					.recordError("Person has been deleted by another process.");
 		}
 	}
 
@@ -265,14 +272,15 @@ public class Persons {
 
 		try {
 			personManagerService.changePerson(editorPerson);
-		}
-		catch (Exception e) {
-			// Display the cause. In a real system we would try harder to get a user-friendly message.
+		} catch (Exception e) {
+			// Display the cause. In a real system we would try harder to get a
+			// user-friendly message.
 			updateForm.recordError(ExceptionUtil.getRootCauseMessage(e));
 		}
 	}
 
-	// Component "updateForm" bubbles up SUCCESS or FAILURE when it is submitted, depending on whether VALIDATE
+	// Component "updateForm" bubbles up SUCCESS or FAILURE when it is
+	// submitted, depending on whether VALIDATE
 	// records an error
 
 	void onSuccessFromUpdateForm() {
@@ -306,9 +314,9 @@ public class Persons {
 			personManagerService.deletePerson(personId, personVersion);
 			editorMode = null;
 			this.editorPersonId = null;
-		}
-		catch (Exception e) {
-			// Display the cause. In a real system we would try harder to get a user-friendly message.
+		} catch (Exception e) {
+			// Display the cause. In a real system we would try harder to get a
+			// user-friendly message.
 			deleteMessage = ExceptionUtil.getRootCauseMessage(e);
 		}
 	}
@@ -322,8 +330,7 @@ public class Persons {
 	public String getLinkCSSClass() {
 		if (listPerson != null && listPerson.getId().equals(editorPersonId)) {
 			return "active";
-		}
-		else {
+		} else {
 			return "";
 		}
 	}
@@ -342,7 +349,8 @@ public class Persons {
 
 	public String getEditorPersonRegion() {
 		// Follow the same naming convention that the Select component uses
-		return messages.get(Regions.class.getSimpleName() + "." + editorPerson.getRegion().name());
+		return messages.get(Regions.class.getSimpleName() + "."
+				+ editorPerson.getRegion().name());
 	}
 
 	public String getDatePattern() {

@@ -17,7 +17,6 @@ import jumpstart.web.encoders.examples.IdVersionsEncoder;
 
 import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.ValueEncoder;
-import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Persist;
@@ -40,7 +39,8 @@ public class AjaxFormLoop1 {
 	@Property
 	private final PersonDTOEncoder personEncoder = new PersonDTOEncoder();
 
-	// A snapshot of the (id, version) of each person originally displayed before you added or removed any. On submit,
+	// A snapshot of the (id, version) of each person originally displayed
+	// before you added or removed any. On submit,
 	// we use it to determine which persons you removed.
 	@Property
 	private List<IdVersion> personsDisplayed;
@@ -79,7 +79,7 @@ public class AjaxFormLoop1 {
 	@InjectComponent
 	private Zone personsEditZone;
 
-	@Component(id = "personsEdit")
+	@InjectComponent("personsEdit")
 	private Form form;
 
 	@EJB
@@ -102,7 +102,8 @@ public class AjaxFormLoop1 {
 	void onPrepareForRender() {
 		inFormSubmission = false;
 
-		// If the page had errors and the user chose to reload it, then we detect that and clear the errors.
+		// If the page had errors and the user chose to reload it, then we
+		// detect that and clear the errors.
 
 		if (personsSubmitted == null) {
 			form.clearErrors();
@@ -111,21 +112,27 @@ public class AjaxFormLoop1 {
 		// If fresh start, populate screen with all persons from the database
 
 		if (form.isValid()) {
-			// Get all persons - ask business service to find them (from the database)
+			// Get all persons - ask business service to find them (from the
+			// database)
 			personsInDB = personFinderService.findPersons(MAX_RESULTS);
 
-			// Populate the persons to be edited, and also a snapshot of who is in that list.
+			// Populate the persons to be edited, and also a snapshot of who is
+			// in that list.
 			persons = new ArrayList<PersonDTO>();
 			personsDisplayed = new ArrayList<IdVersion>();
 
 			for (Person personInDB : personsInDB) {
-				persons.add(new PersonDTO(personInDB.getId(), personInDB.getVersion(), personInDB.getFirstName(),
-						personInDB.getLastName(), personInDB.getRegion(), personInDB.getStartDate()));
-				personsDisplayed.add(new IdVersion(personInDB.getId(), personInDB.getVersion()));
+				persons.add(new PersonDTO(personInDB.getId(), personInDB
+						.getVersion(), personInDB.getFirstName(), personInDB
+						.getLastName(), personInDB.getRegion(), personInDB
+						.getStartDate()));
+				personsDisplayed.add(new IdVersion(personInDB.getId(),
+						personInDB.getVersion()));
 			}
 		}
 
-		// Else, we're rendering after a redirect, so populate the screen from the flash values
+		// Else, we're rendering after a redirect, so populate the screen from
+		// the flash values
 
 		else {
 			persons = new ArrayList<PersonDTO>(personsSubmitted);
@@ -148,7 +155,8 @@ public class AjaxFormLoop1 {
 		personsSubmitted = new ArrayList<PersonDTO>();
 		personsDisplayed = new ArrayList<IdVersion>();
 
-		// Get all persons - ask business service to find them (from the database)
+		// Get all persons - ask business service to find them (from the
+		// database)
 		personsInDB = personFinderService.findPersons(MAX_RESULTS);
 	}
 
@@ -163,24 +171,30 @@ public class AjaxFormLoop1 {
 		personsToChange = new ArrayList<PersonDTO>();
 		personsToDelete = new ArrayList<IdVersion>();
 
-		// Error if any person submitted has a null id and non-null version - it means toValue(...) found they are no
+		// Error if any person submitted has a null id and non-null version - it
+		// means toValue(...) found they are no
 		// longer in the database.
 
 		for (PersonDTO personSubmitted : personsSubmitted) {
-			if (personSubmitted.getId() == null && personSubmitted.getVersion() != null) {
+			if (personSubmitted.getId() == null
+					&& personSubmitted.getVersion() != null) {
 				form.recordError("The list of persons is out of date. Please refresh and try again.");
 				return;
 			}
 		}
 
-		// Figure out which persons to delete, ie. see who you removed by comparing the submitted list to the displayed
-		// list. It would not be correct to compare the submitted list to the database because we would end up deleting
+		// Figure out which persons to delete, ie. see who you removed by
+		// comparing the submitted list to the displayed
+		// list. It would not be correct to compare the submitted list to the
+		// database because we would end up deleting
 		// persons that others have added since display.
 
 		for (IdVersion personDisplayed : personsDisplayed) {
 			boolean removed = true;
 			for (PersonDTO personSubmitted : personsSubmitted) {
-				if (personSubmitted.getId() != null && personSubmitted.getId().equals(personDisplayed.getId())) {
+				if (personSubmitted.getId() != null
+						&& personSubmitted.getId().equals(
+								personDisplayed.getId())) {
 					removed = false;
 					break;
 				}
@@ -190,22 +204,24 @@ public class AjaxFormLoop1 {
 			}
 		}
 
-		// Figure out which persons to create, ie. see which persons you have added. Treat the rest as persons to
+		// Figure out which persons to create, ie. see which persons you have
+		// added. Treat the rest as persons to
 		// change.
 
 		for (PersonDTO personSubmitted : personsSubmitted) {
 			if (personSubmitted.getId() == null) {
 				personsToCreate.add(personSubmitted);
-			}
-			else {
+			} else {
 				personsToChange.add(personSubmitted);
 			}
 		}
 
-		// Simulate a server-side validation error: return error if anyone's first name is BAD_NAME.
+		// Simulate a server-side validation error: return error if anyone's
+		// first name is BAD_NAME.
 
 		for (PersonDTO personSubmitted : personsSubmitted) {
-			if (personSubmitted.getFirstName() != null && personSubmitted.getFirstName().equals(BAD_NAME)) {
+			if (personSubmitted.getFirstName() != null
+					&& personSubmitted.getFirstName().equals(BAD_NAME)) {
 				form.recordError("First name cannot be " + BAD_NAME + ".");
 				return;
 			}
@@ -215,11 +231,13 @@ public class AjaxFormLoop1 {
 			System.out.println(">>> personsToCreate = " + personsToCreate);
 			System.out.println(">>> personsToChange = " + personsToChange);
 			System.out.println(">>> personsToDelete = " + personsToDelete);
-			// In a real application we would persist them to the database instead of printing them.
-			// personManagerService.bulkEditPersonsByDTOs(personsToCreate, personsToChange, personsToDelete);
-		}
-		catch (Exception e) {
-			// Display the cause. In a real system we would try harder to get a user-friendly message.
+			// In a real application we would persist them to the database
+			// instead of printing them.
+			// personManagerService.bulkEditPersonsByDTOs(personsToCreate,
+			// personsToChange, personsToDelete);
+		} catch (Exception e) {
+			// Display the cause. In a real system we would try harder to get a
+			// user-friendly message.
 			form.recordError(ExceptionUtil.getRootCauseMessage(e));
 			return;
 		}
@@ -239,9 +257,9 @@ public class AjaxFormLoop1 {
 				disableSubmit = true;
 			}
 			return personsEditZone.getBody();
-		}
-		else {
-			// Not an AJAX request, so don't bother. Just refresh the screen and it will display "JavaScript required".
+		} else {
+			// Not an AJAX request, so don't bother. Just refresh the screen and
+			// it will display "JavaScript required".
 			return onRefresh();
 		}
 
@@ -267,8 +285,10 @@ public class AjaxFormLoop1 {
 	}
 
 	// This encoder is intended for use in a Loop or AjaxFormLoop:
-	// - during render, to convert each person DTO to an id (AjaxFormLoop then stores the ids in the form, hidden).
-	// - during form submission, to convert each id back to a person DTO. AjaxFormLoop will overwrite several fields of
+	// - during render, to convert each person DTO to an id (AjaxFormLoop then
+	// stores the ids in the form, hidden).
+	// - during form submission, to convert each id back to a person DTO.
+	// AjaxFormLoop will overwrite several fields of
 	// the person DTO returned.
 
 	private class PersonDTOEncoder implements ValueEncoder<PersonDTO> {
@@ -285,31 +305,36 @@ public class AjaxFormLoop1 {
 
 			if (idAsString == null) {
 				person = new PersonDTO();
-			}
-			else {
+			} else {
 				Long id = new Long(idAsString);
 				person = findPerson(id);
 
-				// If person has since been deleted from the DB, create an empty person.
+				// If person has since been deleted from the DB, create an empty
+				// person.
 				if (person == null) {
 					person = new PersonDTO();
 				}
 			}
 
-			// AjaxFormLoop will overwrite several fields of the person DTO returned.
+			// AjaxFormLoop will overwrite several fields of the person DTO
+			// returned.
 			return person;
 		}
 
 		private PersonDTO findPerson(Long id) {
 
-			// If in submit, we could find the person in the database but it's cheaper to search the list we got in
+			// If in submit, we could find the person in the database but it's
+			// cheaper to search the list we got in
 			// onPrepareForSubmit().
 
 			if (inFormSubmission) {
 				for (Person personInDB : personsInDB) {
 					if (personInDB.getId().equals(id)) {
-						PersonDTO personDTO = new PersonDTO(personInDB.getId(), personInDB.getVersion(),
-								personInDB.getFirstName(), personInDB.getLastName(), personInDB.getRegion(),
+						PersonDTO personDTO = new PersonDTO(personInDB.getId(),
+								personInDB.getVersion(),
+								personInDB.getFirstName(),
+								personInDB.getLastName(),
+								personInDB.getRegion(),
 								personInDB.getStartDate());
 						return personDTO;
 					}
@@ -321,8 +346,10 @@ public class AjaxFormLoop1 {
 			else {
 				Person person = personFinderService.findPerson(id);
 				if (person != null) {
-					PersonDTO personDTO = new PersonDTO(person.getId(), person.getVersion(), person.getFirstName(),
-							person.getLastName(), person.getRegion(), person.getStartDate());
+					PersonDTO personDTO = new PersonDTO(person.getId(),
+							person.getVersion(), person.getFirstName(),
+							person.getLastName(), person.getRegion(),
+							person.getStartDate());
 					return personDTO;
 				}
 			}

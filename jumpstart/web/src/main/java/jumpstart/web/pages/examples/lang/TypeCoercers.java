@@ -9,7 +9,7 @@ import jumpstart.business.domain.datestuff.iface.IDateStuffServiceLocal;
 import jumpstart.util.ExceptionUtil;
 
 import org.apache.tapestry5.PersistenceConstants;
-import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.components.Form;
@@ -26,7 +26,8 @@ public class TypeCoercers {
 
 	// Work fields
 
-	// This carries version through the redirect that follows a server-side validation failure.
+	// This carries version through the redirect that follows a server-side
+	// validation failure.
 	@Persist(PersistenceConstants.FLASH)
 	private Integer versionFlash;
 
@@ -35,7 +36,7 @@ public class TypeCoercers {
 	@EJB
 	private IDateStuffServiceLocal dateStuffService;
 
-	@Component(id = "dates")
+	@InjectComponent("dates")
 	private Form form;
 
 	@Inject
@@ -49,7 +50,8 @@ public class TypeCoercers {
 		datesExample = findDatesExample(1L);
 
 		// If the form has errors then we're redisplaying after a redirect.
-		// Form will restore your input values but it's up to us to restore Hidden values.
+		// Form will restore your input values but it's up to us to restore
+		// Hidden values.
 
 		if (form.getHasErrors()) {
 			datesExample.setVersion(versionFlash);
@@ -65,9 +67,9 @@ public class TypeCoercers {
 	void onValidateFromDates() {
 		try {
 			dateStuffService.changeDatesExample(datesExample);
-		}
-		catch (Exception e) {
-			// Display the cause. In a real system we would try harder to get a user-friendly message.
+		} catch (Exception e) {
+			// Display the cause. In a real system we would try harder to get a
+			// user-friendly message.
 			form.recordError(ExceptionUtil.getRootCauseMessage(e));
 		}
 	}
@@ -85,7 +87,8 @@ public class TypeCoercers {
 		DatesExample datesExample = dateStuffService.findDatesExample(id);
 
 		if (datesExample == null) {
-			throw new IllegalStateException("Database data has not been set up!");
+			throw new IllegalStateException(
+					"Database data has not been set up!");
 		}
 
 		return datesExample;
@@ -98,8 +101,7 @@ public class TypeCoercers {
 	public String getExplainLongToInteger() {
 		try {
 			return typeCoercer.explain(Long.class, Integer.class);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			return e.getMessage();
 		}
 	}
@@ -107,8 +109,7 @@ public class TypeCoercers {
 	public String getExplainStringToInteger() {
 		try {
 			return typeCoercer.explain(String.class, Integer.class);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			return e.getMessage();
 		}
 	}
@@ -116,8 +117,7 @@ public class TypeCoercers {
 	public String getExplainDateToDateMidnight() {
 		try {
 			return typeCoercer.explain(Date.class, DateMidnight.class);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			return e.getMessage();
 		}
 	}

@@ -16,7 +16,6 @@ import jumpstart.web.model.together.PersonFilteredDataSource;
 import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.annotations.ActivationRequestParameter;
-import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
@@ -30,7 +29,8 @@ import org.apache.tapestry5.services.ajax.AjaxResponseRenderer;
 
 public class Persons {
 
-	private final String demoModeStr = System.getProperty("jumpstart.demo-mode");
+	private final String demoModeStr = System
+			.getProperty("jumpstart.demo-mode");
 
 	private enum Mode {
 		CREATE, REVIEW, UPDATE, CONFIRM_DELETE;
@@ -57,11 +57,16 @@ public class Persons {
 	private boolean highlightZoneUpdates;
 
 	@Property
-	// If we use @ActivationRequestParameter instead of @Persist, then our handler for filter form success would have
-	// to render more than just the listZone, it would have to render all other links and forms: it would need a zone
-	// around the "Create..." link so it could render it; and it would render the editorZone, which would be destructive
-	// if the user has been typing into Create or Update. Alternatively, it could use a custom JavaScript callback to
-	// update the partialName in all other links and forms - see AjaxResponseRenderer#addCallback(JavaScriptCallback).
+	// If we use @ActivationRequestParameter instead of @Persist, then our
+	// handler for filter form success would have
+	// to render more than just the listZone, it would have to render all other
+	// links and forms: it would need a zone
+	// around the "Create..." link so it could render it; and it would render
+	// the editorZone, which would be destructive
+	// if the user has been typing into Create or Update. Alternatively, it
+	// could use a custom JavaScript callback to
+	// update the partialName in all other links and forms - see
+	// AjaxResponseRenderer#addCallback(JavaScriptCallback).
 	@Persist
 	private String partialName;
 
@@ -77,7 +82,8 @@ public class Persons {
 
 	// Work fields
 
-	// This carries version through the redirect that follows a server-side validation failure.
+	// This carries version through the redirect that follows a server-side
+	// validation failure.
 	@Persist(PersistenceConstants.FLASH)
 	private Integer versionFlash;
 
@@ -89,13 +95,13 @@ public class Persons {
 	@EJB
 	private IPersonManagerServiceLocal personManagerService;
 
-	@Component
+	@InjectComponent
 	private CustomForm createForm;
 
-	@Component
+	@InjectComponent
 	private CustomForm updateForm;
 
-	@Component
+	@InjectComponent
 	private Form confirmDeleteForm;
 
 	@InjectComponent
@@ -115,7 +121,8 @@ public class Persons {
 
 	// The code
 
-	// onPassivate() is called by Tapestry to get the activation context to put in the URL.
+	// onPassivate() is called by Tapestry to get the activation context to put
+	// in the URL.
 
 	Object[] onPassivate() {
 
@@ -124,43 +131,38 @@ public class Persons {
 			arpEditorPersonId = editorPersonId;
 
 			return null;
-		}
-		else {
+		} else {
 
 			if (editorMode == null) {
 				return null;
-			}
-			else if (editorMode == Mode.CREATE) {
+			} else if (editorMode == Mode.CREATE) {
 				return new Object[] { editorMode };
-			}
-			else if (editorMode == Mode.REVIEW || editorMode == Mode.UPDATE || editorMode == Mode.CONFIRM_DELETE) {
+			} else if (editorMode == Mode.REVIEW || editorMode == Mode.UPDATE
+					|| editorMode == Mode.CONFIRM_DELETE) {
 				return new Object[] { editorMode, editorPersonId };
-			}
-			else {
+			} else {
 				throw new IllegalStateException(editorMode.toString());
 			}
 		}
 
 	}
 
-	// onActivate() is called by Tapestry to pass in the activation context from the URL.
+	// onActivate() is called by Tapestry to pass in the activation context from
+	// the URL.
 
 	void onActivate(EventContext ec) {
 
 		if (request.isXHR()) {
 			editorMode = arpEditorMode;
 			editorPersonId = arpEditorPersonId;
-		}
-		else {
+		} else {
 			if (ec.getCount() == 0) {
 				editorMode = null;
 				editorPersonId = null;
-			}
-			else if (ec.getCount() == 1) {
+			} else if (ec.getCount() == 1) {
 				editorMode = ec.get(Mode.class, 0);
 				editorPersonId = null;
-			}
-			else {
+			} else {
 				editorMode = ec.get(Mode.class, 0);
 				editorPersonId = ec.get(Long.class, 1);
 			}
@@ -168,15 +170,15 @@ public class Persons {
 
 	}
 
-	// setupRender() is called by Tapestry right before it starts rendering the page.
+	// setupRender() is called by Tapestry right before it starts rendering the
+	// page.
 
 	void setupRender() {
 		if (editorMode == Mode.REVIEW) {
 			if (editorPersonId == null) {
 				editorPerson = null;
 				// Handle null editorPerson in the template.
-			}
-			else {
+			} else {
 				editorPerson = personFinderService.findPerson(editorPersonId);
 				// Handle null editorPerson in the template.
 			}
@@ -219,7 +221,8 @@ public class Persons {
 		}
 	}
 
-	// Component "createForm" bubbles up the PREPARE event when it is rendered or submitted
+	// Component "createForm" bubbles up the PREPARE event when it is rendered
+	// or submitted
 
 	void onPrepareFromCreateForm() throws Exception {
 		editorMode = Mode.CREATE;
@@ -237,20 +240,22 @@ public class Persons {
 		}
 
 		if (demoModeStr != null && demoModeStr.equals("true")) {
-			createForm.recordError("Sorry, but Create is not allowed in Demo mode.");
+			createForm
+					.recordError("Sorry, but Create is not allowed in Demo mode.");
 			return;
 		}
 
 		try {
 			editorPerson = personManagerService.createPerson(editorPerson);
-		}
-		catch (Exception e) {
-			// Display the cause. In a real system we would try harder to get a user-friendly message.
+		} catch (Exception e) {
+			// Display the cause. In a real system we would try harder to get a
+			// user-friendly message.
 			createForm.recordError(ExceptionUtil.getRootCauseMessage(e));
 		}
 	}
 
-	// Component "createForm" bubbles up SUCCESS or FAILURE when it is submitted, depending on whether VALIDATE
+	// Component "createForm" bubbles up SUCCESS or FAILURE when it is
+	// submitted, depending on whether VALIDATE
 	// records an error
 
 	void onSuccessFromCreateForm() {
@@ -314,7 +319,8 @@ public class Persons {
 		}
 	}
 
-	// Component "updateForm" bubbles up the PREPARE_FOR_RENDER event during form render
+	// Component "updateForm" bubbles up the PREPARE_FOR_RENDER event during
+	// form render
 
 	void onPrepareForRenderFromUpdateForm(Long personId) {
 		editorMode = Mode.UPDATE;
@@ -322,20 +328,21 @@ public class Persons {
 
 		if (request.isXHR()) {
 
-			// If the form is valid then we're not redisplaying due to error, so get the editorPerson.
+			// If the form is valid then we're not redisplaying due to error, so
+			// get the editorPerson.
 
 			if (updateForm.isValid()) {
 				editorPerson = personFinderService.findPerson(personId);
 				// Handle null editorPerson in the template.
 			}
 
-		}
-		else {
+		} else {
 			editorPerson = personFinderService.findPerson(personId);
 			// Handle null editorPerson in the template.
 
 			// If the form has errors then we're redisplaying after a redirect.
-			// Form will restore your input values but it's up to us to restore Hidden values.
+			// Form will restore your input values but it's up to us to restore
+			// Hidden values.
 
 			if (updateForm.getHasErrors()) {
 				if (editorPerson != null) {
@@ -346,7 +353,8 @@ public class Persons {
 		}
 	}
 
-	// Component "updateForm" bubbles up the PREPARE_FOR_SUBMIT event during form submission
+	// Component "updateForm" bubbles up the PREPARE_FOR_SUBMIT event during
+	// form submission
 
 	void onPrepareForSubmitFromUpdateForm(Long personId) {
 		editorPersonId = personId;
@@ -356,7 +364,8 @@ public class Persons {
 
 		if (editorPerson == null) {
 			editorPerson = new Person();
-			updateForm.recordError("Person has been deleted by another process.");
+			updateForm
+					.recordError("Person has been deleted by another process.");
 		}
 	}
 
@@ -371,14 +380,15 @@ public class Persons {
 
 		try {
 			personManagerService.changePerson(editorPerson);
-		}
-		catch (Exception e) {
-			// Display the cause. In a real system we would try harder to get a user-friendly message.
+		} catch (Exception e) {
+			// Display the cause. In a real system we would try harder to get a
+			// user-friendly message.
 			updateForm.recordError(ExceptionUtil.getRootCauseMessage(e));
 		}
 	}
 
-	// Component "updateForm" bubbles up SUCCESS or FAILURE when it is submitted, depending on whether VALIDATE
+	// Component "updateForm" bubbles up SUCCESS or FAILURE when it is
+	// submitted, depending on whether VALIDATE
 	// records an error
 
 	void onSuccessFromUpdateForm() {
@@ -395,8 +405,7 @@ public class Persons {
 
 		if (request.isXHR()) {
 			ajaxResponseRenderer.addRender(editorZone);
-		}
-		else {
+		} else {
 			versionFlash = editorPerson.getVersion();
 		}
 	}
@@ -409,7 +418,8 @@ public class Persons {
 
 	void onDelete(Long personId, Integer personVersion) {
 
-		// If request is AJAX then the user has pressed Delete..., was presented with a Confirm dialog, and OK'd it.
+		// If request is AJAX then the user has pressed Delete..., was presented
+		// with a Confirm dialog, and OK'd it.
 
 		if (request.isXHR()) {
 			editorPersonId = personId;
@@ -417,15 +427,14 @@ public class Persons {
 
 			if (demoModeStr != null && demoModeStr.equals("true")) {
 				deleteMessage = "Sorry, but Delete is not allowed in Demo mode.";
-			}
-			else {
+			} else {
 
 				try {
 					personManagerService.deletePerson(personId, personVersion);
 					successfulDelete = true;
-				}
-				catch (Exception e) {
-					// Display the cause. In a real system we would try harder to get a user-friendly message.
+				} catch (Exception e) {
+					// Display the cause. In a real system we would try harder
+					// to get a user-friendly message.
 					deleteMessage = ExceptionUtil.getRootCauseMessage(e);
 				}
 
@@ -436,10 +445,10 @@ public class Persons {
 				editorPersonId = null;
 
 				if (request.isXHR()) {
-					ajaxResponseRenderer.addRender(listZone).addRender(editorZone);
+					ajaxResponseRenderer.addRender(listZone).addRender(
+							editorZone);
 				}
-			}
-			else {
+			} else {
 				editorMode = Mode.REVIEW;
 				editorPersonId = personId;
 
@@ -451,7 +460,8 @@ public class Persons {
 
 		}
 
-		// Else, (JavaScript disabled) user has pressed Delete..., but not yet confirmed so go to a confirmation screen.
+		// Else, (JavaScript disabled) user has pressed Delete..., but not yet
+		// confirmed so go to a confirmation screen.
 
 		else {
 			editorMode = Mode.CONFIRM_DELETE;
@@ -471,7 +481,8 @@ public class Persons {
 		editorPersonId = personId;
 	}
 
-	// Component "confirmDeleteForm" bubbles up the PREPARE_FOR_RENDER event during form render.
+	// Component "confirmDeleteForm" bubbles up the PREPARE_FOR_RENDER event
+	// during form render.
 
 	void onPrepareForRenderFromConfirmDeleteForm() {
 		editorMode = Mode.CONFIRM_DELETE;
@@ -480,7 +491,8 @@ public class Persons {
 		// Handle null editorPerson in the template.
 
 		// If the form has errors then we're redisplaying after a redirect.
-		// Form will restore your input values but it's up to us to restore Hidden values.
+		// Form will restore your input values but it's up to us to restore
+		// Hidden values.
 
 		if (confirmDeleteForm.getHasErrors()) {
 			if (editorPerson != null) {
@@ -489,7 +501,8 @@ public class Persons {
 		}
 	}
 
-	// Component "confirmDeleteForm" bubbles up the PREPARE_FOR_SUBMIT event during form submission.
+	// Component "confirmDeleteForm" bubbles up the PREPARE_FOR_SUBMIT event
+	// during form submission.
 
 	void onPrepareForSubmitFromConfirmDeleteForm() {
 		// Get objects for the form fields to overlay.
@@ -497,11 +510,13 @@ public class Persons {
 
 		if (editorPerson == null) {
 			editorPerson = new Person();
-			confirmDeleteForm.recordError("Person has already been deleted by another process.");
+			confirmDeleteForm
+					.recordError("Person has already been deleted by another process.");
 		}
 	}
 
-	// Component "confirmDeleteForm" bubbles up the VALIDATE event when it is submitted
+	// Component "confirmDeleteForm" bubbles up the VALIDATE event when it is
+	// submitted
 
 	void onValidateFromConfirmDeleteForm() {
 
@@ -511,23 +526,26 @@ public class Persons {
 		}
 
 		if (demoModeStr != null && demoModeStr.equals("true")) {
-			confirmDeleteForm.recordError("Sorry, but Delete is not allowed in Demo mode.");
-		}
-		else {
+			confirmDeleteForm
+					.recordError("Sorry, but Delete is not allowed in Demo mode.");
+		} else {
 
 			try {
-				personManagerService.deletePerson(editorPersonId, editorPerson.getVersion());
-			}
-			catch (Exception e) {
-				// Display the cause. In a real system we would try harder to get a user-friendly message.
-				confirmDeleteForm.recordError(ExceptionUtil.getRootCauseMessage(e));
+				personManagerService.deletePerson(editorPersonId,
+						editorPerson.getVersion());
+			} catch (Exception e) {
+				// Display the cause. In a real system we would try harder to
+				// get a user-friendly message.
+				confirmDeleteForm.recordError(ExceptionUtil
+						.getRootCauseMessage(e));
 			}
 
 		}
 
 	}
 
-	// Component "confirmDeleteForm" bubbles up SUCCESS or FAILURE when it is submitted, depending on whether
+	// Component "confirmDeleteForm" bubbles up SUCCESS or FAILURE when it is
+	// submitted, depending on whether
 	// VALIDATE records an error
 
 	void onSuccessFromConfirmDeleteForm() {
@@ -551,8 +569,7 @@ public class Persons {
 	public String getLinkCSSClass() {
 		if (listPerson != null && listPerson.getId().equals(editorPersonId)) {
 			return "active";
-		}
-		else {
+		} else {
 			return "";
 		}
 	}
@@ -587,7 +604,8 @@ public class Persons {
 
 	public String getEditorPersonRegion() {
 		// Follow the same naming convention that the Select component uses
-		return messages.get(Regions.class.getSimpleName() + "." + editorPerson.getRegion().name());
+		return messages.get(Regions.class.getSimpleName() + "."
+				+ editorPerson.getRegion().name());
 	}
 
 	public String getDatePattern() {

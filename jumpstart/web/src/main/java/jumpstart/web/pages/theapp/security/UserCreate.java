@@ -8,7 +8,7 @@ import jumpstart.business.domain.security.iface.ISecurityManagerServiceLocal;
 import jumpstart.web.annotation.ProtectedPage;
 import jumpstart.web.base.theapp.SimpleBasePage;
 
-import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.components.Form;
@@ -38,10 +38,10 @@ public class UserCreate extends SimpleBasePage {
 
 	// Generally useful bits and pieces
 
-	@Component(id = "form")
+	@InjectComponent
 	private Form form;
 
-	@Component(id = "password")
+	@InjectComponent("password")
 	private PasswordField passwordField;
 
 	@EJB
@@ -65,15 +65,16 @@ public class UserCreate extends SimpleBasePage {
 			return;
 		}
 
-		if (password != null && confirmPassword != null && !password.equals(confirmPassword)) {
-			form.recordError(passwordField, getMessages().get("User_confirmpassword_does_not_match"));
+		if (password != null && confirmPassword != null
+				&& !password.equals(confirmPassword)) {
+			form.recordError(passwordField,
+					getMessages().get("User_confirmpassword_does_not_match"));
 			return;
 		}
 
 		try {
 			securityManagerService.createUser(user, password);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			form.recordError(interpretBusinessServicesExceptionForCreate(e));
 			return;
 		}
@@ -107,6 +108,7 @@ public class UserCreate extends SimpleBasePage {
 	}
 
 	public EnumValueEncoder<PageStyle> getPageStyleEncoder() {
-		return new EnumValueEncoder<PageStyle>(typeCoercer, User.PageStyle.class);
+		return new EnumValueEncoder<PageStyle>(typeCoercer,
+				User.PageStyle.class);
 	}
 }

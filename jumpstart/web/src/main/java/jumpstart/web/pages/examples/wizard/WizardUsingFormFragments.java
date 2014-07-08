@@ -5,7 +5,7 @@ import jumpstart.web.model.Conversations;
 import jumpstart.web.pages.Index;
 import jumpstart.web.state.examples.wizard.CreditRequest;
 
-import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
@@ -47,7 +47,7 @@ public class WizardUsingFormFragments {
 
 	// Generally useful bits and pieces
 
-	@Component(id = "form")
+	@InjectComponent
 	private Form form;
 
 	// The code
@@ -81,7 +81,8 @@ public class WizardUsingFormFragments {
 		}
 
 		// If the conversation does not contain the model
-		// then it means the Back/Reload/Refresh button has been used to reach an old conversation,
+		// then it means the Back/Reload/Refresh button has been used to reach
+		// an old conversation,
 		// so redirect to the bad-flow-step
 
 		if (restoreCreditRequestFromConversation() == null) {
@@ -116,18 +117,21 @@ public class WizardUsingFormFragments {
 				creditRequest.validateApplicantInfo();
 				break;
 			case SUBMIT:
-				// In the real world we would probably submit it to the business layer here
-				// but we're not, so let's simulate a busy period then complete the request!
+				// In the real world we would probably submit it to the business
+				// layer here
+				// but we're not, so let's simulate a busy period then complete
+				// the request!
 
 				sleep(5000);
 				creditRequest.complete();
 				break;
 			default:
-				throw new IllegalStateException("Should not get here. step = " + step);
+				throw new IllegalStateException("Should not get here. step = "
+						+ step);
 			}
-		}
-		catch (Exception e) {
-			// Display the cause. In a real system we would try harder to get a user-friendly message.
+		} catch (Exception e) {
+			// Display the cause. In a real system we would try harder to get a
+			// user-friendly message.
 			form.recordError(ExceptionUtil.getRootCauseMessage(e));
 		}
 	}
@@ -143,13 +147,16 @@ public class WizardUsingFormFragments {
 		case SUBMIT:
 			endConversation();
 
-			// In the real world we would now have a credit request in the database and the success page would want its
+			// In the real world we would now have a credit request in the
+			// database and the success page would want its
 			// id instead of these two fields.
 
-			successPage.set(creditRequest.getAmount(), creditRequest.getApplicantName());
+			successPage.set(creditRequest.getAmount(),
+					creditRequest.getApplicantName());
 			return successPage;
 		default:
-			throw new IllegalStateException("Should not get here. step = " + step);
+			throw new IllegalStateException("Should not get here. step = "
+					+ step);
 		}
 	}
 
@@ -162,7 +169,8 @@ public class WizardUsingFormFragments {
 			step = Step.APPLICANT;
 			break;
 		default:
-			throw new IllegalStateException("Should not get here. step = " + step);
+			throw new IllegalStateException("Should not get here. step = "
+					+ step);
 		}
 	}
 
@@ -176,17 +184,20 @@ public class WizardUsingFormFragments {
 	}
 
 	public void startConversation() {
-		conversationId = conversations.startConversation(WIZARD_CONVERSATION_PREFIX);
+		conversationId = conversations
+				.startConversation(WIZARD_CONVERSATION_PREFIX);
 		creditRequest = new CreditRequest();
 		saveCreditRequestToConversation(creditRequest);
 	}
 
 	private void saveCreditRequestToConversation(CreditRequest creditRequest) {
-		conversations.saveToConversation(conversationId, CREDIT_REQUEST_KEY, creditRequest);
+		conversations.saveToConversation(conversationId, CREDIT_REQUEST_KEY,
+				creditRequest);
 	}
 
 	private CreditRequest restoreCreditRequestFromConversation() {
-		return (CreditRequest) conversations.restoreFromConversation(conversationId, CREDIT_REQUEST_KEY);
+		return (CreditRequest) conversations.restoreFromConversation(
+				conversationId, CREDIT_REQUEST_KEY);
 	}
 
 	private void endConversation() {
@@ -200,7 +211,8 @@ public class WizardUsingFormFragments {
 	}
 
 	public boolean isInEntrySteps() {
-		return step == Step.START || step == Step.APPLICANT || step == Step.SUBMIT;
+		return step == Step.START || step == Step.APPLICANT
+				|| step == Step.SUBMIT;
 	}
 
 	public boolean isInStart() {
@@ -222,8 +234,7 @@ public class WizardUsingFormFragments {
 	private void sleep(long millis) {
 		try {
 			Thread.sleep(millis);
-		}
-		catch (InterruptedException e) {
+		} catch (InterruptedException e) {
 			// Ignore
 		}
 	}

@@ -20,7 +20,7 @@ import jumpstart.web.base.theapp.SimpleBasePage;
 
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.annotations.ActivationRequestParameter;
-import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.components.Form;
@@ -31,8 +31,10 @@ import org.apache.tapestry5.services.PageRenderLinkSource;
 public class UserSearch extends SimpleBasePage {
 	static private final String ISO_DATE_PATTERN = "yyyy-MM-dd";
 
-	// The options for userSearchFields.active are null, true, and false but we have to present them using
-	// String[] instead of Boolean[] because the inbuilt type coercer coerces null to false.
+	// The options for userSearchFields.active are null, true, and false but we
+	// have to present them using
+	// String[] instead of Boolean[] because the inbuilt type coercer coerces
+	// null to false.
 	// (see https://issues.apache.org/jira/browse/TAPESTRY-1928).
 	static private final String[] ACTIVE_OPTIONS = { "true", "false" };
 
@@ -53,7 +55,8 @@ public class UserSearch extends SimpleBasePage {
 	@ActivationRequestParameter(value = "email")
 	private String email;
 
-	// We could declare expiry to be a Date if we also contribute a ValueEncoder for Date in AppModule.
+	// We could declare expiry to be a Date if we also contribute a ValueEncoder
+	// for Date in AppModule.
 	@ActivationRequestParameter(value = "expiry")
 	private String expiry;
 
@@ -83,20 +86,20 @@ public class UserSearch extends SimpleBasePage {
 	@Persist
 	private Boolean lastShowResult;
 
-	@Component(id = "form")
+	@InjectComponent
 	private Form form;
 
 	@Inject
 	private PageRenderLinkSource pageRenderLinkSource;
-	
+
 	@EJB
 	private ISecurityFinderServiceLocal securityFinderService;
-	
+
 	@EJB
 	private ISecurityManagerServiceLocal securityManagerService;
 
 	// The code
-	
+
 	void onActivate() {
 		setSearchFieldsFromRequest();
 	}
@@ -136,18 +139,17 @@ public class UserSearch extends SimpleBasePage {
 
 		if (form.isValid()) {
 
-			// Delete the user from the database unless they've been modified elsewhere
+			// Delete the user from the database unless they've been modified
+			// elsewhere
 
 			try {
 				User user = securityFinderService.findUser(id);
 				if (!user.getVersion().equals(version)) {
 					form.recordError("Cannot delete user because has been updated or deleted since last displayed.  Please refresh and try again.");
-				}
-				else {
+				} else {
 					securityManagerService.deleteUser(user);
 				}
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				form.recordError(interpretBusinessServicesExceptionForDelete(e));
 			}
 		}
@@ -156,16 +158,21 @@ public class UserSearch extends SimpleBasePage {
 
 	List<User> search(UserSearchFields searchFields) {
 		SearchOptions searchOptions = new SearchOptions();
-		List<User> l = securityFinderService.findUsersShallowish(searchFields, searchOptions);
+		List<User> l = securityFinderService.findUsersShallowish(searchFields,
+				searchOptions);
 		return l;
 	}
 
 	void setSearchFieldsFromRequest() {
 
-		// Set the search filter criteria from the request URL query string fields.
-		// We could have put the filter fields in the activation context, but arguably it's more RESTful to use
-		// query string for filter criteria. The URL is certainly a more reliable bookmark this way.
-		// Eg. See http://blpsilva.wordpress.com/2008/04/05/query-strings-in-restful-web-services/
+		// Set the search filter criteria from the request URL query string
+		// fields.
+		// We could have put the filter fields in the activation context, but
+		// arguably it's more RESTful to use
+		// query string for filter criteria. The URL is certainly a more
+		// reliable bookmark this way.
+		// Eg. See
+		// http://blpsilva.wordpress.com/2008/04/05/query-strings-in-restful-web-services/
 
 		searchFields.setLoginId(loginId);
 		searchFields.setSalutation(salutation);
@@ -179,10 +186,13 @@ public class UserSearch extends SimpleBasePage {
 	void setRequest(UserSearchFields search, Boolean showResult) {
 
 		// Return a link with the non-null search filter criteria in it.
-		// We could have used onPassivate to output the search fields as the activation context, but arguably
-		// it's more RESTful to use a query string for filter criteria. The URL is certainly a more reliable
+		// We could have used onPassivate to output the search fields as the
+		// activation context, but arguably
+		// it's more RESTful to use a query string for filter criteria. The URL
+		// is certainly a more reliable
 		// bookmark this way.
-		// Eg. See http://blpsilva.wordpress.com/2008/04/05/query-strings-in-restful-web-services/
+		// Eg. See
+		// http://blpsilva.wordpress.com/2008/04/05/query-strings-in-restful-web-services/
 
 		if (lastSearchFields == null) {
 			loginId = null;
@@ -192,8 +202,7 @@ public class UserSearch extends SimpleBasePage {
 			email = null;
 			expiry = null;
 			active = null;
-		}
-		else {
+		} else {
 			loginId = search.getLoginId();
 			salutation = search.getSalutation();
 			firstName = search.getFirstName();
@@ -215,8 +224,7 @@ public class UserSearch extends SimpleBasePage {
 		try {
 			DateFormat isoDateFormat = new SimpleDateFormat(ISO_DATE_PATTERN);
 			return value == null ? null : isoDateFormat.parse(value);
-		}
-		catch (ParseException e) {
+		} catch (ParseException e) {
 			return null;
 		}
 	}
@@ -243,10 +251,13 @@ public class UserSearch extends SimpleBasePage {
 
 	public void setActiveAsString(String activeAsString) {
 
-		// We can't simply use an encoder in the template to convert this field to/from a selected option because
-		// the built in type coercer intercepts Booleans and converts null to false! We want null to mean null.
+		// We can't simply use an encoder in the template to convert this field
+		// to/from a selected option because
+		// the built in type coercer intercepts Booleans and converts null to
+		// false! We want null to mean null.
 
-		Boolean active = StringUtil.isEmpty(activeAsString) ? null : Boolean.valueOf(activeAsString);
+		Boolean active = StringUtil.isEmpty(activeAsString) ? null : Boolean
+				.valueOf(activeAsString);
 		searchFields.setActive(active);
 	}
 

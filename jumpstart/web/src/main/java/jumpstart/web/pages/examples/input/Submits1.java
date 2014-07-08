@@ -1,6 +1,6 @@
 package jumpstart.web.pages.examples.input;
 
-import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.components.Form;
@@ -19,7 +19,7 @@ public class Submits1 {
 
 	// Generally useful bits and pieces
 
-	@Component
+	@InjectComponent
 	private Form search;
 
 	public enum SearchType {
@@ -41,13 +41,13 @@ public class Submits1 {
 	void onSelectedFromCancel() {
 		searchType = SearchType.CANCEL;
 	}
-	
+
 	void onValidateFromSearch() {
 		if (searchType == SearchType.CANCEL) {
 			search.clearErrors();
 		}
 	}
-	
+
 	Object onSuccess() {
 		page2.set(searchType, name);
 		return page2;

@@ -6,7 +6,7 @@ import java.util.Locale;
 
 import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.ValidationException;
-import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.components.TextField;
@@ -62,7 +62,7 @@ public class AugmentingTranslators {
 	@Inject
 	private Messages messages;
 
-	@Component(id = "objectAllowingShorthandInput")
+	@InjectComponent("objectAllowingShorthandInput")
 	private TextField objectAllowingShorthandInputField;
 
 	// The code
@@ -72,15 +72,15 @@ public class AugmentingTranslators {
 	String onToClientFromPrimitiveWithZeroSuppressed() {
 		if (primitiveWithZeroSuppressed == 0) {
 			return "";
-		}
-		else {
+		} else {
 			// Return control to the normal translator.
 			return null;
 		}
 	}
 
 	Object onParseClientFromPrimitiveWithZeroSuppressed(String input) {
-		// We included this handler only to set the message. Return control to the normal translator.
+		// We included this handler only to set the message. Return control to
+		// the normal translator.
 		primitiveWithZeroSuppressedMessage = PARSED;
 		return null;
 	}
@@ -90,15 +90,15 @@ public class AugmentingTranslators {
 	String onToClientFromObjectDisplayingNullAsZero() {
 		if (objectDisplayingNullAsZero == null) {
 			return "0";
-		}
-		else {
+		} else {
 			// Return control to the normal translator.
 			return null;
 		}
 	}
 
 	Object onParseClientFromObjectDisplayingNullAsZero(String input) {
-		// We included this handler only to set the message. Return control to the normal translator.
+		// We included this handler only to set the message. Return control to
+		// the normal translator.
 		objectDisplayingNullAsZeroMessage = PARSED;
 		return null;
 	}
@@ -106,59 +106,67 @@ public class AugmentingTranslators {
 	/* 3rd field. */
 
 	Object onParseClientFromObjectUsingZeroNullFieldStrategy(String input) {
-		// We included this handler only to set the message. Return control to the normal translator.
+		// We included this handler only to set the message. Return control to
+		// the normal translator.
 		objectUsingZeroNullFieldStrategyMessage = PARSED;
 		return null;
 	}
 
 	/* 4th field. */
 
-	Object onParseClientFromObjectAllowingShorthandInput(String input) throws ValidationException {
+	Object onParseClientFromObjectAllowingShorthandInput(String input)
+			throws ValidationException {
 		objectAllowingShorthandInputMessage = PARSED;
 		String trimmed = input.trim();
 
-		// If the trimmed input has a suffix of "k", "K", "m", or "M", then replace it with 3 or 6 zeroes.
+		// If the trimmed input has a suffix of "k", "K", "m", or "M", then
+		// replace it with 3 or 6 zeroes.
 
 		if (trimmed.length() > 1) {
 			String lastChar = trimmed.substring(trimmed.length() - 1);
 
 			if (lastChar.equalsIgnoreCase("k")) {
 				trimmed = trimmed.substring(0, trimmed.length() - 1) + "000";
-			}
-			else if (lastChar.equalsIgnoreCase("m")) {
+			} else if (lastChar.equalsIgnoreCase("m")) {
 				trimmed = trimmed.substring(0, trimmed.length() - 1) + "000000";
 			}
 		}
 
 		try {
 
-			// Convert to a canonical form, stripping out grouping separators and disallowing decimal separators.
-			// We can't leave this to NumericTranslatorSupport because it uses Java's NumberFormat.parse(String) which
+			// Convert to a canonical form, stripping out grouping separators
+			// and disallowing decimal separators.
+			// We can't leave this to NumericTranslatorSupport because it uses
+			// Java's NumberFormat.parse(String) which
 			// is very lenient.
 
 			String canonical = toCanonical(trimmed, true);
 
-			Long l = numericTranslatorSupport.parseClient(Long.class, canonical);
+			Long l = numericTranslatorSupport
+					.parseClient(Long.class, canonical);
 			return l;
-		}
-		catch (ParseException e) {
-			String message = messages.format(numericTranslatorSupport.getMessageKey(Long.class),
+		} catch (ParseException e) {
+			String message = messages.format(
+					numericTranslatorSupport.getMessageKey(Long.class),
 					objectAllowingShorthandInputField.getLabel());
 			throw new ValidationException(message);
 		}
 	}
 
 	/**
-	 * This is the same pre-processing that Tapestry's client-side translator does (in tapestry.js).
+	 * This is the same pre-processing that Tapestry's client-side translator
+	 * does (in tapestry.js).
 	 */
-	private String toCanonical(String s, boolean anInteger) throws ParseException {
+	private String toCanonical(String s, boolean anInteger)
+			throws ParseException {
 		DecimalFormatSymbols symbols = new DecimalFormatSymbols(locale);
 
 		char minusSign = symbols.getMinusSign();
 		char groupingSeparator = symbols.getGroupingSeparator();
 		char decimalSeparator = symbols.getDecimalSeparator();
 
-		// Convert non-breaking space to space. Necessary for French and other locales.
+		// Convert non-breaking space to space. Necessary for French and other
+		// locales.
 		if ((int) groupingSeparator == 160) {
 			groupingSeparator = ' ';
 		}
@@ -169,23 +177,22 @@ public class AugmentingTranslators {
 
 			if (ch == minusSign) {
 				canonical.append("-");
-			}
-			else if (ch == groupingSeparator) {
+			} else if (ch == groupingSeparator) {
 				continue;
-			}
-			else if (ch == decimalSeparator) {
+			} else if (ch == decimalSeparator) {
 				if (anInteger) {
-					throw new ParseException("Integer contains a decimal separator.", -1);
+					throw new ParseException(
+							"Integer contains a decimal separator.", -1);
 				}
 				canonical.append(".");
-			}
-			else if (ch >= '0' && ch <= '9') {
+			} else if (ch >= '0' && ch <= '9') {
 				canonical.append(ch);
-			}
-			else {
-				// System.out.println("ch = " + (int) ch + ", groupingSeparator = " + (int) groupingSeparator + ".");
+			} else {
+				// System.out.println("ch = " + (int) ch +
+				// ", groupingSeparator = " + (int) groupingSeparator + ".");
 				throw new ParseException(
-						"Contains character other than digit, minus sign, grouping separator, or decimal separator", -1);
+						"Contains character other than digit, minus sign, grouping separator, or decimal separator",
+						-1);
 			}
 
 		}

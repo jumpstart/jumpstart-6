@@ -14,7 +14,7 @@ import jumpstart.web.state.theapp.Visit;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
-import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.components.Form;
@@ -42,23 +42,23 @@ public class Login extends SimpleBasePage implements IIntermediatePage {
 	@Persist
 	private Link nextPageLink;
 
-	@Component(id = "login")
+	@InjectComponent("login")
 	private Form form;
 
-	@Component(id = "loginId")
+	@InjectComponent("loginId")
 	private TextField loginIdField;
 
 	@Inject
 	private Logger logger;
-	
+
 	@Inject
 	private ComponentResources componentResources;
-	
+
 	@EJB
 	private ISecurityFinderServiceLocal securityFinderService;
 
 	// The code
-	
+
 	@Override
 	public void setNextPageLink(Link nextPageLink) {
 		this.nextPageLink = nextPageLink;
@@ -82,17 +82,16 @@ public class Login extends SimpleBasePage implements IIntermediatePage {
 		try {
 			// Authenticate the user
 
-			User user = securityFinderService.authenticateUser(loginId, password);
+			User user = securityFinderService.authenticateUser(loginId,
+					password);
 
 			// Store the user in the Visit
 
 			setVisit(new Visit(user));
 			logger.info(user.getLoginId() + " has logged in.");
-		}
-		catch (BusinessException e) {
+		} catch (BusinessException e) {
 			form.recordError(loginIdField, e.getLocalizedMessage());
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Could not log in.  Stack trace follows...");
 			logger.error(ExceptionUtil.printStackTrace(e));
 			form.recordError(getMessages().get("login_problem"));
@@ -100,17 +99,16 @@ public class Login extends SimpleBasePage implements IIntermediatePage {
 	}
 
 	Object onSuccess() {
-		
+
 		if (nextPageLink == null) {
 			return Welcome.class;
-		}
-		else {
+		} else {
 			componentResources.discardPersistentFieldChanges();
 			return nextPageLink;
 		}
 
 	}
-	
+
 	Object onGoHome() {
 		componentResources.discardPersistentFieldChanges();
 		return Index.class;

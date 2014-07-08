@@ -1,7 +1,7 @@
 package jumpstart.web.pages.examples.input;
 
 import org.apache.tapestry5.PersistenceConstants;
-import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.components.Form;
@@ -21,13 +21,13 @@ public class MixedValidation {
 
 	// Generally useful bits and pieces
 
-	@Component(id = "inputs")
+	@InjectComponent("inputs")
 	private Form form;
 
-	@Component(id = "firstName")
+	@InjectComponent("firstName")
 	private TextField firstNameField;
 
-	@Component(id = "lastName")
+	@InjectComponent("lastName")
 	private TextField lastNameField;
 
 	// The code
@@ -38,13 +38,15 @@ public class MixedValidation {
 
 		if (firstName != null) {
 			if (!firstName.matches("[A-Za-z]+")) {
-				form.recordError(firstNameField, "First Name must contain letters only");
+				form.recordError(firstNameField,
+						"First Name must contain letters only");
 			}
 		}
 
 		if (lastName != null) {
 			if (!lastName.matches("[A-Za-z]+")) {
-				form.recordError(lastNameField, "Last Name must contain letters only");
+				form.recordError(lastNameField,
+						"Last Name must contain letters only");
 			}
 		}
 	}

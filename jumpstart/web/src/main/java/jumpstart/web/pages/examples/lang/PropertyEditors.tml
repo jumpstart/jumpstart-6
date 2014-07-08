@@ -60,7 +60,7 @@
 	<a href="http://tapestry.apache.org/5.3/apidocs/org/apache/tapestry5/services/PropertyEditContext.html">PropertyEditContext</a>, 
 	<a href="http://tapestry.apache.org/5.3/apidocs/org/apache/tapestry5/corelib/components/DateField.html">DateField</a>, 
 	<a href="http://tapestry.apache.org/5.3/apidocs/org/apache/tapestry5/corelib/components/TextField.html">TextField</a>, 
-	<a href="http://tapestry.apache.org/5.3/apidocs/org/apache/tapestry5/annotations/Component.html">@Component</a>, 
+	<a href="http://tapestry.apache.org/5.3/apidocs/org/apache/tapestry5/annotations/InjectComponent.html">@InjectComponent</a>, 
 	<a href="http://joda-time.sourceforge.net/">Joda Time</a>.<br/><br/>
  	
 	<a t:type="pagelink" t:page="Index" href="#">Home</a><br/><br/>

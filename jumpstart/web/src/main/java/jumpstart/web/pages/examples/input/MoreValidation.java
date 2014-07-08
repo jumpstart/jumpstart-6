@@ -2,7 +2,7 @@ package jumpstart.web.pages.examples.input;
 
 import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.ValidationException;
-import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.components.Form;
@@ -21,7 +21,7 @@ public class MoreValidation {
 
 	// Generally useful bits and pieces
 
-	@Component(id = "inputs")
+	@InjectComponent("inputs")
 	private Form form;
 
 	// The code
@@ -32,7 +32,8 @@ public class MoreValidation {
 
 		if (value != null) {
 			if (!value.matches("[A-Za-z]+")) {
-				throw new ValidationException("First Name must contain letters only");
+				throw new ValidationException(
+						"First Name must contain letters only");
 			}
 		}
 
@@ -44,7 +45,8 @@ public class MoreValidation {
 
 		if (value != null) {
 			if (value.equals(13)) {
-				throw new ValidationException("Sorry, but 13 is not a lucky number.");
+				throw new ValidationException(
+						"Sorry, but 13 is not a lucky number.");
 			}
 		}
 

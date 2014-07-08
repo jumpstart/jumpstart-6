@@ -19,7 +19,7 @@ import jumpstart.web.model.app.select.UserIdSelectModel;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.annotations.ActivationRequestParameter;
-import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
@@ -80,20 +80,20 @@ public class UserRoleSearch extends SimpleBasePage {
 
 	// Generally useful bits and pieces
 
-	@Component(id = "form")
+	@InjectComponent
 	private Form form;
 
 	@Inject
 	private PageRenderLinkSource pageRenderLinkSource;
-	
+
 	@EJB
 	private ISecurityFinderServiceLocal securityFinderService;
-	
+
 	@EJB
 	private ISecurityManagerServiceLocal securityManagerService;
 
 	// The code
-	
+
 	void onActivate() {
 		setSearchFieldsFromRequest();
 	}
@@ -125,7 +125,8 @@ public class UserRoleSearch extends SimpleBasePage {
 
 	List<UserRole> search(UserRoleSearchFields searchFields) {
 		SearchOptions searchOptions = new SearchOptions();
-		List<UserRole> l = securityFinderService.findUserRolesShallowish(searchFields, searchOptions);
+		List<UserRole> l = securityFinderService.findUserRolesShallowish(
+				searchFields, searchOptions);
 		return l;
 	}
 
@@ -163,18 +164,17 @@ public class UserRoleSearch extends SimpleBasePage {
 
 		if (form.isValid()) {
 
-			// Delete the user from the database unless they've been modified elsewhere
+			// Delete the user from the database unless they've been modified
+			// elsewhere
 
 			try {
 				UserRole userRole = securityFinderService.findUserRole(id);
 				if (!userRole.getVersion().equals(version)) {
 					form.recordError("Cannot remove user role because has been updated or deleted since last displayed.  Please refresh and try again.");
-				}
-				else {
+				} else {
 					securityManagerService.removeUserRole(userRole);
 				}
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				form.recordError(interpretBusinessServicesExceptionForRemove(e));
 			}
 		}
@@ -184,10 +184,14 @@ public class UserRoleSearch extends SimpleBasePage {
 
 	void setSearchFieldsFromRequest() {
 
-		// Set the search filter criteria from the request URL query string fields.
-		// We could have put the filter fields in the activation context, but arguably it's more RESTful to use
-		// query string for filter criteria. The URL is certainly a more reliable bookmark this way.
-		// Eg. See http://blpsilva.wordpress.com/2008/04/05/query-strings-in-restful-web-services/
+		// Set the search filter criteria from the request URL query string
+		// fields.
+		// We could have put the filter fields in the activation context, but
+		// arguably it's more RESTful to use
+		// query string for filter criteria. The URL is certainly a more
+		// reliable bookmark this way.
+		// Eg. See
+		// http://blpsilva.wordpress.com/2008/04/05/query-strings-in-restful-web-services/
 
 		searchFields.setUserId(userId);
 		searchFields.setRoleId(roleId);
@@ -196,16 +200,18 @@ public class UserRoleSearch extends SimpleBasePage {
 	void setRequest(UserRoleSearchFields search, Boolean showResult) {
 
 		// Return a link with the non-null search filter criteria in it.
-		// We could have used onPassivate to output the search fields as the activation context, but arguably
-		// it's more RESTful to use a query string for filter criteria. The URL is certainly a more reliable
+		// We could have used onPassivate to output the search fields as the
+		// activation context, but arguably
+		// it's more RESTful to use a query string for filter criteria. The URL
+		// is certainly a more reliable
 		// bookmark this way.
-		// Eg. See http://blpsilva.wordpress.com/2008/04/05/query-strings-in-restful-web-services/
+		// Eg. See
+		// http://blpsilva.wordpress.com/2008/04/05/query-strings-in-restful-web-services/
 
 		if (lastSearchFields == null) {
 			userId = null;
 			roleId = null;
-		}
-		else {
+		} else {
 			userId = search.getUserId();
 			roleId = search.getRoleId();
 		}

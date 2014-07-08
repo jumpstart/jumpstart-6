@@ -11,7 +11,7 @@ import jumpstart.web.annotation.ProtectedPage;
 import jumpstart.web.base.theapp.SimpleBasePage;
 
 import org.apache.tapestry5.PersistenceConstants;
-import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.components.Form;
@@ -33,13 +33,14 @@ public class MyPreferencesEdit extends SimpleBasePage {
 
 	// Work fields
 
-	// This carries version through the redirect that follows a server-side validation failure.
+	// This carries version through the redirect that follows a server-side
+	// validation failure.
 	@Persist(PersistenceConstants.FLASH)
 	private Integer versionFlash;
 
 	// Generally useful bits and pieces
 
-	@Component(id = "form")
+	@InjectComponent
 	private Form form;
 
 	@EJB
@@ -58,7 +59,8 @@ public class MyPreferencesEdit extends SimpleBasePage {
 		user = securityFinderService.findUser(userId);
 
 		// If the form has errors then we're redisplaying after a redirect.
-		// Form will restore your input values but it's up to us to restore Hidden values.
+		// Form will restore your input values but it's up to us to restore
+		// Hidden values.
 
 		if (form.getHasErrors()) {
 			user.setVersion(versionFlash);
@@ -78,8 +80,7 @@ public class MyPreferencesEdit extends SimpleBasePage {
 	void onValidateFromForm() {
 		try {
 			securityManagerService.changeUser(user);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			form.recordError(interpretBusinessServicesExceptionForChange(e));
 		}
 	}
@@ -109,6 +110,7 @@ public class MyPreferencesEdit extends SimpleBasePage {
 	}
 
 	public EnumValueEncoder<PageStyle> getPageStyleEncoder() {
-		return new EnumValueEncoder<PageStyle>(typeCoercer, User.PageStyle.class);
+		return new EnumValueEncoder<PageStyle>(typeCoercer,
+				User.PageStyle.class);
 	}
 }

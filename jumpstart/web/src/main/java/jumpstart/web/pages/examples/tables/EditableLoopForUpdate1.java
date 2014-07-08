@@ -20,7 +20,6 @@ import jumpstart.web.commons.FieldCopy;
 import org.apache.tapestry5.Field;
 import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.ValueEncoder;
-import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Persist;
@@ -59,8 +58,10 @@ public class EditableLoopForUpdate1 {
 
 	private List<Person> personsSubmitted;
 
-	// This carries the list of submitted persons through the redirect that follows a server-side validation failure.
-	// We do this to compensate for the fact that Form doesn't carry Hidden component values through a redirect.
+	// This carries the list of submitted persons through the redirect that
+	// follows a server-side validation failure.
+	// We do this to compensate for the fact that Form doesn't carry Hidden
+	// component values through a redirect.
 	@Persist(PersistenceConstants.FLASH)
 	private List<Person> personsSubmittedFlash;
 
@@ -74,7 +75,7 @@ public class EditableLoopForUpdate1 {
 
 	// Generally useful bits and pieces
 
-	@Component(id = "personsEdit")
+	@InjectComponent("personsEdit")
 	private Form form;
 
 	@InjectComponent
@@ -100,7 +101,8 @@ public class EditableLoopForUpdate1 {
 		// If fresh start, populate screen with all persons from the database
 
 		if (form.isValid()) {
-			// Get all persons - ask business service to find them (from the database)
+			// Get all persons - ask business service to find them (from the
+			// database)
 			personsInDB = personFinderService.findPersons(MAX_RESULTS);
 
 			// Populate the persons to be edited.
@@ -111,7 +113,8 @@ public class EditableLoopForUpdate1 {
 			}
 		}
 
-		// Else, we're rendering after a redirect, so rebuild the list with the same persons as were submitted
+		// Else, we're rendering after a redirect, so rebuild the list with the
+		// same persons as were submitted
 
 		else {
 			persons = new ArrayList<Person>(personsSubmittedFlash);
@@ -124,11 +127,12 @@ public class EditableLoopForUpdate1 {
 		inFormSubmission = true;
 		personsSubmitted = new ArrayList<Person>();
 
-		// Get all persons - ask business service to find them (from the database)
+		// Get all persons - ask business service to find them (from the
+		// database)
 		personsInDB = personFinderService.findPersons(MAX_RESULTS);
 
 		// Prepare to take a copy of each editable field.
-		
+
 		rowNum = 0;
 		firstNameCopyByRowNum = new HashMap<Integer, FieldCopy>();
 	}
@@ -145,7 +149,8 @@ public class EditableLoopForUpdate1 {
 			return;
 		}
 
-		// Error if any person submitted has a null id - it means toValue(...) found they are no longer in the database.
+		// Error if any person submitted has a null id - it means toValue(...)
+		// found they are no longer in the database.
 
 		for (Person personSubmitted : personsSubmitted) {
 			if (personSubmitted.getId() == null) {
@@ -154,30 +159,36 @@ public class EditableLoopForUpdate1 {
 			}
 		}
 
-		// Simulate a server-side validation error: return error if anyone's first name is BAD_NAME.
+		// Simulate a server-side validation error: return error if anyone's
+		// first name is BAD_NAME.
 
 		rowNum = 0;
 
 		for (Person personSubmitted : personsSubmitted) {
 			rowNum++;
 
-			if (personSubmitted.getFirstName() != null && personSubmitted.getFirstName().equals(BAD_NAME)) {
-				// Unfortunately, at this point the field firstName is from the final row of the Loop.
-				// Fortunately, we have a copy of the correct field, so we can record the error with that.
+			if (personSubmitted.getFirstName() != null
+					&& personSubmitted.getFirstName().equals(BAD_NAME)) {
+				// Unfortunately, at this point the field firstName is from the
+				// final row of the Loop.
+				// Fortunately, we have a copy of the correct field, so we can
+				// record the error with that.
 
 				Field field = firstNameCopyByRowNum.get(rowNum);
-				form.recordError(field, "First name cannot be " + BAD_NAME + ".");
+				form.recordError(field, "First name cannot be " + BAD_NAME
+						+ ".");
 				return;
 			}
 		}
 
 		try {
 			System.out.println(">>> personsSubmitted = " + personsSubmitted);
-			// In a real application we would persist them to the database instead of printing them
+			// In a real application we would persist them to the database
+			// instead of printing them
 			// personManagerService.changePersons(personsSubmitted);
-		}
-		catch (Exception e) {
-			// Display the cause. In a real system we would try harder to get a user-friendly message.
+		} catch (Exception e) {
+			// Display the cause. In a real system we would try harder to get a
+			// user-friendly message.
 			form.recordError(ExceptionUtil.getRootCauseMessage(e));
 		}
 	}
@@ -208,8 +219,10 @@ public class EditableLoopForUpdate1 {
 	}
 
 	// This encoder is used by our Loop:
-	// - during render, to convert each person to an id (Loop then stores the ids in the form, hidden).
-	// - during form submission, to convert each id back to a person which it puts in our person field. Loop will
+	// - during render, to convert each person to an id (Loop then stores the
+	// ids in the form, hidden).
+	// - during form submission, to convert each id back to a person which it
+	// puts in our person field. Loop will
 	// overwrite the person returned with the input fields and hidden fields.
 
 	private class PersonEncoder implements ValueEncoder<Person> {
@@ -226,12 +239,12 @@ public class EditableLoopForUpdate1 {
 
 			if (idAsString == null) {
 				person = new Person();
-			}
-			else {
+			} else {
 				Long id = new Long(idAsString);
 				person = findPerson(id);
 
-				// If person has since been deleted from the DB. Create a skeleton person.
+				// If person has since been deleted from the DB. Create a
+				// skeleton person.
 				if (person == null) {
 					person = new Person();
 				}
@@ -243,7 +256,8 @@ public class EditableLoopForUpdate1 {
 
 		private Person findPerson(Long id) {
 
-			// We could find the person in the database, but it's cheaper to search the list we got in
+			// We could find the person in the database, but it's cheaper to
+			// search the list we got in
 			// onPrepareForSubmit().
 
 			for (Person personInDB : personsInDB) {

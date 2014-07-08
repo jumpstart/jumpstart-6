@@ -20,7 +20,6 @@ import jumpstart.web.commons.FieldCopy;
 import org.apache.tapestry5.Field;
 import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.ValueEncoder;
-import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Persist;
@@ -58,8 +57,10 @@ public class LoopWithDeleteColumn1 {
 
 	private List<IdVersion> personsToDelete;
 
-	// This carries the list of submitted persons through the redirect that follows a server-side validation failure.
-	// We do this to compensate for the fact that Form doesn't carry the Hidden component's value through the redirect.
+	// This carries the list of submitted persons through the redirect that
+	// follows a server-side validation failure.
+	// We do this to compensate for the fact that Form doesn't carry the Hidden
+	// component's value through the redirect.
 	@Persist(PersistenceConstants.FLASH)
 	private List<Person> personsSubmittedFlash;
 
@@ -73,7 +74,7 @@ public class LoopWithDeleteColumn1 {
 
 	// Generally useful bits and pieces
 
-	@Component(id = "deletables")
+	@InjectComponent("deletables")
 	private Form form;
 
 	@InjectComponent
@@ -98,7 +99,8 @@ public class LoopWithDeleteColumn1 {
 		// If fresh start, populate screen with all persons from the database
 
 		if (form.isValid()) {
-			// Get all persons - ask business service to find them (from the database)
+			// Get all persons - ask business service to find them (from the
+			// database)
 			personsInDB = personFinderService.findPersons(MAX_RESULTS);
 
 			persons = new ArrayList<Person>();
@@ -107,7 +109,8 @@ public class LoopWithDeleteColumn1 {
 			}
 		}
 
-		// Else, we're rendering after a redirect, so rebuild the list with the same persons as were submitted
+		// Else, we're rendering after a redirect, so rebuild the list with the
+		// same persons as were submitted
 
 		else {
 			persons = new ArrayList<Person>(personsSubmittedFlash);
@@ -121,7 +124,8 @@ public class LoopWithDeleteColumn1 {
 		personsSubmitted = new ArrayList<Person>();
 		personsToDelete = new ArrayList<IdVersion>();
 
-		// Get all persons - ask business service to find them (from the database)
+		// Get all persons - ask business service to find them (from the
+		// database)
 		personsInDB = personFinderService.findPersons(MAX_RESULTS);
 
 		// Prepare to take a copy of each editable field.
@@ -131,8 +135,10 @@ public class LoopWithDeleteColumn1 {
 	}
 
 	void onValidateFromDelete() {
-		// Unfortunately, this method is never called because Checkbox doesn't bubble up VALIDATE. It's a shame because
-		// this would be the perfect place to validate whether deleting is OK, or to put an entry in deleteCopyByRowNum.
+		// Unfortunately, this method is never called because Checkbox doesn't
+		// bubble up VALIDATE. It's a shame because
+		// this would be the perfect place to validate whether deleting is OK,
+		// or to put an entry in deleteCopyByRowNum.
 		// Please vote for https://issues.apache.org/jira/browse/TAP5-2075 .
 	}
 
@@ -143,7 +149,8 @@ public class LoopWithDeleteColumn1 {
 			return;
 		}
 
-		// Error if any person to delete has a null id - it means toValue(...) found they are no longer in the database.
+		// Error if any person to delete has a null id - it means toValue(...)
+		// found they are no longer in the database.
 
 		for (IdVersion personToDelete : personsToDelete) {
 			if (personToDelete.getId() == null) {
@@ -152,8 +159,10 @@ public class LoopWithDeleteColumn1 {
 			}
 		}
 
-		// Populate our list of persons to delete with the submitted versions (see setDelete(...) for more).
-		// Also, simulate a server-side validation error: return error if deleting a person with first name BAD_NAME.
+		// Populate our list of persons to delete with the submitted versions
+		// (see setDelete(...) for more).
+		// Also, simulate a server-side validation error: return error if
+		// deleting a person with first name BAD_NAME.
 
 		for (IdVersion personToDelete : personsToDelete) {
 			rowNum = 0;
@@ -161,15 +170,20 @@ public class LoopWithDeleteColumn1 {
 			for (Person p : personsSubmitted) {
 				rowNum++;
 
-				if (p.getId() != null && p.getId().equals(personToDelete.getId())) {
+				if (p.getId() != null
+						&& p.getId().equals(personToDelete.getId())) {
 					personToDelete.setVersion(p.getVersion());
 
-					if (p.getFirstName() != null && p.getFirstName().equals(BAD_NAME)) {
-						// Unfortunately, at this point the field "delete" is from the final row of the Loop.
-						// Fortunately, we have a copy of the correct field, so we can record the error with that.
+					if (p.getFirstName() != null
+							&& p.getFirstName().equals(BAD_NAME)) {
+						// Unfortunately, at this point the field "delete" is
+						// from the final row of the Loop.
+						// Fortunately, we have a copy of the correct field, so
+						// we can record the error with that.
 
 						Field field = deleteCopyByRowNum.get(rowNum);
-						form.recordError(field, "Cannot delete " + BAD_NAME + ".");
+						form.recordError(field, "Cannot delete " + BAD_NAME
+								+ ".");
 						return;
 					}
 
@@ -181,11 +195,13 @@ public class LoopWithDeleteColumn1 {
 		try {
 			System.out.println(">>> personsSubmitted = " + personsSubmitted);
 			System.out.println(">>> personsToDelete = " + personsToDelete);
-			// In a real application we would persist them to the database instead of printing them
-			// personManagerService.bulkEditPersons(new ArrayList<Person>(), new ArrayList<Person>(), personsToDelete);
-		}
-		catch (Exception e) {
-			// Display the cause. In a real system we would try harder to get a user-friendly message.
+			// In a real application we would persist them to the database
+			// instead of printing them
+			// personManagerService.bulkEditPersons(new ArrayList<Person>(), new
+			// ArrayList<Person>(), personsToDelete);
+		} catch (Exception e) {
+			// Display the cause. In a real system we would try harder to get a
+			// user-friendly message.
 			form.recordError(ExceptionUtil.getRootCauseMessage(e));
 		}
 	}
@@ -216,8 +232,10 @@ public class LoopWithDeleteColumn1 {
 	}
 
 	// This encoder is used by our Loop:
-	// - during render, to convert each person to an id (Loop then stores the ids in the form, hidden).
-	// - during form submission, to convert each id back to a person which it puts in our person field.
+	// - during render, to convert each person to an id (Loop then stores the
+	// ids in the form, hidden).
+	// - during form submission, to convert each id back to a person which it
+	// puts in our person field.
 
 	private class PersonEncoder implements ValueEncoder<Person> {
 
@@ -232,7 +250,8 @@ public class LoopWithDeleteColumn1 {
 			Long id = idAsString == null ? null : new Long(idAsString);
 			Person person = findPerson(id);
 
-			// If person has since been deleted from the DB. Create a skeleton person.
+			// If person has since been deleted from the DB. Create a skeleton
+			// person.
 			if (person == null) {
 				person = new Person();
 			}
@@ -243,7 +262,8 @@ public class LoopWithDeleteColumn1 {
 
 		private Person findPerson(Long id) {
 
-			// We could find the person in the database, but it's cheaper to search the list we got in
+			// We could find the person in the database, but it's cheaper to
+			// search the list we got in
 			// onPrepareForSubmit().
 
 			for (Person person : personsInDB) {
@@ -255,7 +275,8 @@ public class LoopWithDeleteColumn1 {
 		}
 	};
 
-	// The Loop component will automatically call this for every row as it is rendered.
+	// The Loop component will automatically call this for every row as it is
+	// rendered.
 
 	public boolean isDelete() {
 		return false;
@@ -269,8 +290,10 @@ public class LoopWithDeleteColumn1 {
 			deleteCopyByRowNum.put(rowNum, new FieldCopy(this.delete));
 
 			if (delete) {
-				// Put the current person in our list of ones to delete. Record their id but not version - we shouldn't
-				// assume person.version has been overwritten yet with the submitted value - it may still hold the
+				// Put the current person in our list of ones to delete. Record
+				// their id but not version - we shouldn't
+				// assume person.version has been overwritten yet with the
+				// submitted value - it may still hold the
 				// database value.
 				personsToDelete.add(new IdVersion(person.getId(), null));
 			}

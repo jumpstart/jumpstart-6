@@ -6,7 +6,7 @@ import jumpstart.business.domain.datestuff.DatesExample;
 import jumpstart.business.domain.datestuff.iface.IDateStuffServiceLocal;
 import jumpstart.util.ExceptionUtil;
 
-import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.components.BeanEditForm;
 
@@ -16,13 +16,13 @@ public class PropertyEditors {
 
 	@Property
 	private DatesExample datesExample;
-	
+
 	// Generally useful bits and pieces
 
 	@EJB
 	private IDateStuffServiceLocal dateStuffService;
 
-	@Component(id = "updateDates")
+	@InjectComponent("updateDates")
 	private BeanEditForm form;
 
 	// The code
@@ -37,14 +37,15 @@ public class PropertyEditors {
 
 	void onValidateFromUpdateDates() {
 		try {
-			if (datesExample.getADateMidnight() == null || datesExample.getALocalDate() == null) {
+			if (datesExample.getADateMidnight() == null
+					|| datesExample.getALocalDate() == null) {
 				form.recordError("Both dates are required.");
 				return;
 			}
 			dateStuffService.changeDatesExample(datesExample);
-		}
-		catch (Exception e) {
-			// Display the cause. In a real system we would try harder to get a user-friendly message.
+		} catch (Exception e) {
+			// Display the cause. In a real system we would try harder to get a
+			// user-friendly message.
 			form.recordError(ExceptionUtil.getRootCauseMessage(e));
 		}
 	}
@@ -54,10 +55,11 @@ public class PropertyEditors {
 		DatesExample datesExample = dateStuffService.findDatesExample(id);
 
 		if (datesExample == null) {
-			throw new IllegalStateException("Database data has not been set up!");
+			throw new IllegalStateException(
+					"Database data has not been set up!");
 		}
 
 		return datesExample;
 	}
-	
+
 }

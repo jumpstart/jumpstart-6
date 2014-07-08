@@ -6,14 +6,15 @@ import jumpstart.business.domain.person.Person;
 import jumpstart.business.domain.person.iface.IPersonManagerServiceLocal;
 import jumpstart.util.ExceptionUtil;
 
-import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.components.BeanEditForm;
 
 public class Create1 {
 
-	private final String demoModeStr = System.getProperty("jumpstart.demo-mode");
+	private final String demoModeStr = System
+			.getProperty("jumpstart.demo-mode");
 
 	// Screen fields
 
@@ -27,7 +28,7 @@ public class Create1 {
 
 	// Generally useful bits and pieces
 
-	@Component(id = "personForm")
+	@InjectComponent
 	private BeanEditForm personForm;
 
 	@EJB
@@ -43,15 +44,16 @@ public class Create1 {
 
 	void onValidateFromPersonForm() {
 		if (demoModeStr != null && demoModeStr.equals("true")) {
-			personForm.recordError("Sorry, but this function is not allowed in Demo mode.");
+			personForm
+					.recordError("Sorry, but this function is not allowed in Demo mode.");
 			return;
 		}
-		
+
 		try {
 			personManagerService.createPerson(person);
-		}
-		catch (Exception e) {
-			// Display the cause. In a real system we would try harder to get a user-friendly message.
+		} catch (Exception e) {
+			// Display the cause. In a real system we would try harder to get a
+			// user-friendly message.
 			personForm.recordError(ExceptionUtil.getRootCauseMessage(e));
 		}
 	}

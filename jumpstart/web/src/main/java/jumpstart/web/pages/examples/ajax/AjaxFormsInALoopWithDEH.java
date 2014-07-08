@@ -14,7 +14,6 @@ import jumpstart.business.domain.person.iface.IPersonManagerServiceLocal;
 import jumpstart.util.ExceptionUtil;
 import jumpstart.web.commons.EvenOdd;
 
-import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
@@ -74,7 +73,7 @@ public class AjaxFormsInALoopWithDEH {
 	@Inject
 	private AjaxResponseRenderer ajaxResponseRenderer;
 
-	@Component
+	@InjectComponent
 	private Form personForm;
 
 	@Inject
@@ -96,7 +95,8 @@ public class AjaxFormsInALoopWithDEH {
 	void setupRender() {
 		loadingLoop = true;
 
-		// Get all persons - ask business service to find them (from the database)
+		// Get all persons - ask business service to find them (from the
+		// database)
 		persons = personFinderService.findPersons(MAX_RESULTS);
 
 		evenOdd = new EvenOdd();
@@ -104,14 +104,16 @@ public class AjaxFormsInALoopWithDEH {
 
 	void onPrepareForRenderFromPersonForm(Long personId) {
 
-		// If the loop is being reloaded, the form may have had errors so clear them just in case.
+		// If the loop is being reloaded, the form may have had errors so clear
+		// them just in case.
 
 		if (loadingLoop) {
 			personForm.clearErrors();
 			editing = false;
 		}
 
-		// If the form is valid then we're not redisplaying due to error, so get the person.
+		// If the form is valid then we're not redisplaying due to error, so get
+		// the person.
 
 		if (personForm.isValid()) {
 			person = personFinderService.findPerson(personId);
@@ -126,9 +128,11 @@ public class AjaxFormsInALoopWithDEH {
 		person = personFinderService.findPerson(personId);
 
 		if (person == null) {
-			// Create an empty person for the form fields to overlay. It avoids NPE.
+			// Create an empty person for the form fields to overlay. It avoids
+			// NPE.
 			person = new Person();
-			personForm.recordError("Person has been deleted by another process.");
+			personForm
+					.recordError("Person has been deleted by another process.");
 		}
 	}
 
@@ -149,33 +153,34 @@ public class AjaxFormsInALoopWithDEH {
 		if (action == Actions.SAVE) {
 
 			if (personForm.getHasErrors()) {
-				// We get here only if a server-side validator detected an error.
+				// We get here only if a server-side validator detected an
+				// error.
 				return;
 			}
 
-			// Simulate a server-side validation error: return error if anyone's first name is BAD_NAME.
+			// Simulate a server-side validation error: return error if anyone's
+			// first name is BAD_NAME.
 
-			if (person.getFirstName() != null && person.getFirstName().equals(BAD_NAME)) {
-				personForm.recordError("First name cannot be " + BAD_NAME + ".");
+			if (person.getFirstName() != null
+					&& person.getFirstName().equals(BAD_NAME)) {
+				personForm
+						.recordError("First name cannot be " + BAD_NAME + ".");
 				return;
 			}
 
 			try {
 				personManagerService.changePerson(person);
-			}
-			catch (Exception e) {
-				// Display the cause. In a real system we would try harder to get a user-friendly message.
+			} catch (Exception e) {
+				// Display the cause. In a real system we would try harder to
+				// get a user-friendly message.
 				personForm.recordError(ExceptionUtil.getRootCauseMessage(e));
 			}
 
-		}
-		else if (action == Actions.TO_EDIT) {
+		} else if (action == Actions.TO_EDIT) {
 			// Do nothing - there may be an error so don't clear the form.
-		}
-		else if (action == Actions.CANCEL) {
+		} else if (action == Actions.CANCEL) {
 			personForm.clearErrors();
-		}
-		else {
+		} else {
 			throw new IllegalStateException(action.name());
 		}
 
@@ -200,18 +205,21 @@ public class AjaxFormsInALoopWithDEH {
 	}
 
 	public String getCurrentRowZoneId() {
-		// The id attribute of a row must be the same every time that row asks for it and unique on the page.
+		// The id attribute of a row must be the same every time that row asks
+		// for it and unique on the page.
 		return "rowZone_" + getPersonId();
 	}
 
 	public Long getPersonId() {
-		// Here we ensure we return the person's id even if they have been deleted since the page was loaded.
+		// Here we ensure we return the person's id even if they have been
+		// deleted since the page was loaded.
 		return loadingLoop ? person.getId() : personId;
 	}
 
 	public String getPersonRegion() {
 		// Follow the same naming convention that the Select component uses
-		return messages.get(Regions.class.getSimpleName() + "." + person.getRegion().name());
+		return messages.get(Regions.class.getSimpleName() + "."
+				+ person.getRegion().name());
 	}
 
 	public Format getDateFormat() {

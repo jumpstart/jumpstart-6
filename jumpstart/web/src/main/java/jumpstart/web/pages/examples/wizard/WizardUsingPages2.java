@@ -5,7 +5,7 @@ import jumpstart.web.base.examples.wizard.WizardConversationalPage;
 import jumpstart.web.pages.Index;
 import jumpstart.web.state.examples.wizard.CreditRequest;
 
-import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.components.Form;
@@ -30,7 +30,7 @@ public class WizardUsingPages2 extends WizardConversationalPage {
 
 	// Generally useful bits and pieces
 
-	@Component(id = "form")
+	@InjectComponent
 	private Form form;
 
 	// The code
@@ -53,9 +53,9 @@ public class WizardUsingPages2 extends WizardConversationalPage {
 
 		try {
 			creditRequest.validateApplicantInfo();
-		}
-		catch (Exception e) {
-			// Display the cause. In a real system we would try harder to get a user-friendly message.
+		} catch (Exception e) {
+			// Display the cause. In a real system we would try harder to get a
+			// user-friendly message.
 			form.recordError(ExceptionUtil.getRootCauseMessage(e));
 		}
 	}

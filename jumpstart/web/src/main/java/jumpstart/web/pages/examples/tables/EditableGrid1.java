@@ -20,7 +20,6 @@ import jumpstart.util.StringUtil;
 import jumpstart.web.commons.FieldCopy;
 
 import org.apache.tapestry5.Field;
-import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Property;
@@ -67,7 +66,7 @@ public class EditableGrid1 {
 
 	// Generally useful bits and pieces
 
-	@Component(id = "personsCreate")
+	@InjectComponent("personsCreate")
 	private Form form;
 
 	@InjectComponent
@@ -101,10 +100,12 @@ public class EditableGrid1 {
 	void onPrepareForRender() {
 		createPersonsList();
 
-		// If fresh start (ie. not rendering after a redirect), add an example person.
+		// If fresh start (ie. not rendering after a redirect), add an example
+		// person.
 
 		if (form.isValid()) {
-			persons.set(0, new Person("Example", "Person", Regions.EAST_COAST, getTodayDate()));
+			persons.set(0, new Person("Example", "Person", Regions.EAST_COAST,
+					getTodayDate()));
 		}
 	}
 
@@ -181,30 +182,35 @@ public class EditableGrid1 {
 		for (Person person : persons) {
 			rowNum++;
 
-			if (StringUtil.isNotEmpty(person.getFirstName()) || StringUtil.isNotEmpty(person.getLastName())
-					|| person.getRegion() != null || person.getStartDate() != null) {
+			if (StringUtil.isNotEmpty(person.getFirstName())
+					|| StringUtil.isNotEmpty(person.getLastName())
+					|| person.getRegion() != null
+					|| person.getStartDate() != null) {
 
-				// Unfortunately, at this point the fields firstName, lastName, etc. are from the final row of the Grid.
-				// Fortunately, we have a copy of the correct fields, so we can record the error with those.
+				// Unfortunately, at this point the fields firstName, lastName,
+				// etc. are from the final row of the Grid.
+				// Fortunately, we have a copy of the correct fields, so we can
+				// record the error with those.
 
 				if (StringUtil.isEmpty(person.getFirstName())) {
 					Field field = firstNameCopyByRowNum.get(rowNum);
-					form.recordError(field, messages.format(REQUIRED_MSG_KEY, field.getLabel()));
+					form.recordError(field,
+							messages.format(REQUIRED_MSG_KEY, field.getLabel()));
 					return;
-				}
-				else if (StringUtil.isEmpty(person.getLastName())) {
+				} else if (StringUtil.isEmpty(person.getLastName())) {
 					Field field = lastNameCopyByRowNum.get(rowNum);
-					form.recordError(field, messages.format(REQUIRED_MSG_KEY, field.getLabel()));
+					form.recordError(field,
+							messages.format(REQUIRED_MSG_KEY, field.getLabel()));
 					return;
-				}
-				else if (person.getRegion() == null) {
+				} else if (person.getRegion() == null) {
 					Field field = regionCopyByRowNum.get(rowNum);
-					form.recordError(field, messages.format(REQUIRED_MSG_KEY, field.getLabel()));
+					form.recordError(field,
+							messages.format(REQUIRED_MSG_KEY, field.getLabel()));
 					return;
-				}
-				else if (person.getStartDate() == null) {
+				} else if (person.getStartDate() == null) {
 					Field field = startDateCopyByRowNum.get(rowNum);
-					form.recordError(field, messages.format(REQUIRED_MSG_KEY, field.getLabel()));
+					form.recordError(field,
+							messages.format(REQUIRED_MSG_KEY, field.getLabel()));
 					return;
 				}
 
@@ -214,11 +220,12 @@ public class EditableGrid1 {
 
 		try {
 			System.out.println(">>> personsToCreate = " + personsToCreate);
-			// In a real application we would persist them to the database instead of printing them
+			// In a real application we would persist them to the database
+			// instead of printing them
 			// personManagerService.createPersons(personsToCreate);
-		}
-		catch (Exception e) {
-			// Display the cause. In a real system we would try harder to get a user-friendly message.
+		} catch (Exception e) {
+			// Display the cause. In a real system we would try harder to get a
+			// user-friendly message.
 			form.recordError(ExceptionUtil.getRootCauseMessage(e));
 		}
 	}
@@ -229,7 +236,8 @@ public class EditableGrid1 {
 	}
 
 	void onFailure() {
-		// Unnecessary method. Loop will carry the submitted input field values through the redirect.
+		// Unnecessary method. Loop will carry the submitted input field values
+		// through the redirect.
 	}
 
 	void onRefresh() {
@@ -244,7 +252,8 @@ public class EditableGrid1 {
 		Calendar now = Calendar.getInstance();
 		Calendar today = Calendar.getInstance();
 		today.clear();
-		today.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH));
+		today.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH),
+				now.get(Calendar.DAY_OF_MONTH));
 		return today.getTime();
 	}
 

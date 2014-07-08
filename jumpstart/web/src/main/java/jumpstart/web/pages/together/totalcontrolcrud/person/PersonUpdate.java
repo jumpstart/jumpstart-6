@@ -10,7 +10,7 @@ import jumpstart.web.components.CustomForm;
 import jumpstart.web.pages.together.totalcontrolcrud.Persons;
 
 import org.apache.tapestry5.PersistenceConstants;
-import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
@@ -29,7 +29,8 @@ public class PersonUpdate {
 
 	// Work fields
 
-	// This carries version through the redirect that follows a server-side validation failure.
+	// This carries version through the redirect that follows a server-side
+	// validation failure.
 	@Persist(PersistenceConstants.FLASH)
 	private Integer versionFlash;
 
@@ -40,7 +41,7 @@ public class PersonUpdate {
 
 	// Generally useful bits and pieces
 
-	@Component(id = "personForm")
+	@InjectComponent
 	private CustomForm personForm;
 
 	@EJB
@@ -51,13 +52,15 @@ public class PersonUpdate {
 
 	// The code
 
-	// onPassivate() is called by Tapestry to get the activation context to put in the URL.
+	// onPassivate() is called by Tapestry to get the activation context to put
+	// in the URL.
 
 	Long onPassivate() {
 		return personId;
 	}
 
-	// onActivate() is called by Tapestry to pass in the activation context from the URL.
+	// onActivate() is called by Tapestry to pass in the activation context from
+	// the URL.
 
 	void onActivate(Long personId) {
 		this.personId = personId;
@@ -70,7 +73,8 @@ public class PersonUpdate {
 		// Handle null person in the template.
 
 		// If the form has errors then we're redisplaying after a redirect.
-		// Form will restore your input values but it's up to us to restore Hidden values.
+		// Form will restore your input values but it's up to us to restore
+		// Hidden values.
 
 		if (personForm.getHasErrors()) {
 			if (person != null) {
@@ -79,7 +83,8 @@ public class PersonUpdate {
 		}
 	}
 
-	// PersonForm bubbles up the PREPARE_FOR_SUBMIT event during form submission.
+	// PersonForm bubbles up the PREPARE_FOR_SUBMIT event during form
+	// submission.
 
 	void onPrepareForSubmit() {
 		// Get objects for the form fields to overlay.
@@ -87,7 +92,8 @@ public class PersonUpdate {
 
 		if (person == null) {
 			person = new Person();
-			personForm.recordError("Person has been deleted by another process.");
+			personForm
+					.recordError("Person has been deleted by another process.");
 		}
 	}
 
@@ -102,14 +108,15 @@ public class PersonUpdate {
 
 		try {
 			personManagerService.changePerson(person);
-		}
-		catch (Exception e) {
-			// Display the cause. In a real system we would try harder to get a user-friendly message.
+		} catch (Exception e) {
+			// Display the cause. In a real system we would try harder to get a
+			// user-friendly message.
 			personForm.recordError(ExceptionUtil.getRootCauseMessage(e));
 		}
 	}
 
-	// PersonForm bubbles up SUCCESS or FAILURE when it is submitted, depending on whether VALIDATE records an error
+	// PersonForm bubbles up SUCCESS or FAILURE when it is submitted, depending
+	// on whether VALIDATE records an error
 
 	Object onSuccess() {
 		return indexPage;

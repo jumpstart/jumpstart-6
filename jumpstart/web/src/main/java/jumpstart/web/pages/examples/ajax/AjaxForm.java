@@ -2,7 +2,6 @@ package jumpstart.web.pages.examples.ajax;
 
 import java.util.Date;
 
-import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.components.DateField;
@@ -30,16 +29,16 @@ public class AjaxForm {
 	@Inject
 	private Request request;
 
-	@Component
+	@InjectComponent
 	private Form ajaxForm;
 
-	@Component(id = "birthday")
+	@InjectComponent("birthday")
 	private DateField birthdayField;
 
-	@Component(id = "firstName")
+	@InjectComponent("firstName")
 	private TextField firstNameField;
 
-	@Component(id = "lastName")
+	@InjectComponent("lastName")
 	private TextField lastNameField;
 
 	@InjectComponent
@@ -65,11 +64,11 @@ public class AjaxForm {
 		}
 		if (birthday == null) {
 			ajaxForm.recordError(birthdayField, "Birthday is required.");
-		}
-		else {
+		} else {
 			Date now = new Date();
 			if (birthday.after(now)) {
-				ajaxForm.recordError(birthdayField, "Birthday must be in the past.");
+				ajaxForm.recordError(birthdayField,
+						"Birthday must be in the past.");
 			}
 		}
 	}

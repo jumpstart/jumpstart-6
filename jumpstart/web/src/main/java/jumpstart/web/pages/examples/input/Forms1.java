@@ -1,6 +1,6 @@
 package jumpstart.web.pages.examples.input;
 
-import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.components.Form;
@@ -23,13 +23,13 @@ public class Forms1 {
 
 	// Generally useful bits and pieces
 
-	@Component(id = "names")
+	@InjectComponent("names")
 	private Form form;
 
-	@Component(id = "firstName")
+	@InjectComponent("firstName")
 	private TextField firstNameField;
 
-	@Component(id = "lastName")
+	@InjectComponent("lastName")
 	private TextField lastNameField;
 
 	// The code

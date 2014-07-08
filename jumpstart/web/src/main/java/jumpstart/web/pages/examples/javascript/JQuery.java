@@ -1,7 +1,7 @@
 package jumpstart.web.pages.examples.javascript;
 
-import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Import;
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.components.TextField;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -25,17 +25,18 @@ public class JQuery {
 	@Inject
 	private JavaScriptSupport javaScriptSupport;
 
-	@Component(id = "firstName")
+	@InjectComponent("firstName")
 	private TextField firstNameField;
 
-	@Component(id = "lastName")
+	@InjectComponent("lastName")
 	private TextField lastNameField;
 
 	// The code
 
 	public void afterRender() {
 
-		// Tell the Tapestry.Initializer to do the initializing of our 2 TextboxHints, which it will do when the DOM has
+		// Tell the Tapestry.Initializer to do the initializing of our 2
+		// TextboxHints, which it will do when the DOM has
 		// been fully loaded.
 
 		JSONObject spec = new JSONObject();

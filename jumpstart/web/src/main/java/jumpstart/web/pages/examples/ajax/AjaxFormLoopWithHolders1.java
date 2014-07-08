@@ -17,7 +17,6 @@ import jumpstart.util.ExceptionUtil;
 import jumpstart.web.encoders.examples.IdVersionsEncoder;
 
 import org.apache.tapestry5.ValueEncoder;
-import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Property;
@@ -39,7 +38,8 @@ public class AjaxFormLoopWithHolders1 {
 	@Property
 	private final PersonHolderEncoder personHolderEncoder = new PersonHolderEncoder();
 
-	// A snapshot of the (id, version) of each person displayed. On submit, we use it to determine which persons you
+	// A snapshot of the (id, version) of each person displayed. On submit, we
+	// use it to determine which persons you
 	// removed.
 	@Property
 	private List<IdVersion> personsDisplayed;
@@ -76,7 +76,7 @@ public class AjaxFormLoopWithHolders1 {
 	@InjectComponent
 	private Zone personsEditZone;
 
-	@Component(id = "personsEdit")
+	@InjectComponent("personsEdit")
 	private Form form;
 
 	@EJB
@@ -99,7 +99,8 @@ public class AjaxFormLoopWithHolders1 {
 	void onPrepareForRender() {
 		inFormSubmission = false;
 
-		// If the page had errors and the user chose to reload it, then we detect that and clear the errors.
+		// If the page had errors and the user chose to reload it, then we
+		// detect that and clear the errors.
 
 		if (personHoldersReconstructed == null) {
 			form.clearErrors();
@@ -108,36 +109,44 @@ public class AjaxFormLoopWithHolders1 {
 		// If fresh start, populate screen with all persons from the database
 
 		if (form.isValid()) {
-			// Get all persons - ask business service to find them (from the database)
+			// Get all persons - ask business service to find them (from the
+			// database)
 			personsInDB = personFinderService.findPersons(MAX_RESULTS);
 
-			// Populate the persons to be edited, and also a snapshot of who is in that list.
+			// Populate the persons to be edited, and also a snapshot of who is
+			// in that list.
 			personHolders = new ArrayList<PersonHolder>();
 
 			for (Person personInDB : personsInDB) {
-				personHolders.add(new PersonHolder(personInDB.getId(), personInDB.getVersion(), personInDB));
+				personHolders.add(new PersonHolder(personInDB.getId(),
+						personInDB.getVersion(), personInDB));
 			}
 		}
 
-		// Else, we're rendering after a redirect, so populate the screen from the reconstructed values
+		// Else, we're rendering after a redirect, so populate the screen from
+		// the reconstructed values
 
 		else {
-			personHolders = new ArrayList<PersonHolder>(personHoldersReconstructed);
+			personHolders = new ArrayList<PersonHolder>(
+					personHoldersReconstructed);
 		}
 
 		personsDisplayed = new ArrayList<IdVersion>();
 
 		for (PersonHolder personHolder : personHolders) {
 			if (personHolder.getId() != null) {
-				personsDisplayed.add(new IdVersion(personHolder.getId(), personHolder.getVersion()));
+				personsDisplayed.add(new IdVersion(personHolder.getId(),
+						personHolder.getVersion()));
 			}
 		}
 	}
 
 	PersonHolder onAddRow() {
 		// Return a skeleton person holder which AjaxFormLoop will overwrite.
-		// We need a unique id so that if you remove it later we identify which one you removed and flag it removed.
-		// We use a negative id so it doesn't clash with the id of an existing person.
+		// We need a unique id so that if you remove it later we identify which
+		// one you removed and flag it removed.
+		// We use a negative id so it doesn't clash with the id of an existing
+		// person.
 		return new PersonHolder(0 - System.nanoTime(), null, new Person());
 	}
 
@@ -152,13 +161,15 @@ public class AjaxFormLoopWithHolders1 {
 		personHoldersSubmitted = new ArrayList<PersonHolder>();
 		personsDisplayed = new ArrayList<IdVersion>();
 
-		// Get all persons - ask business service to find them (from the database)
+		// Get all persons - ask business service to find them (from the
+		// database)
 		personsInDB = personFinderService.findPersons(MAX_RESULTS);
 	}
 
 	void onValidateFromPersonsEdit() {
 
-		// Reconstruct the displayed list of persons, creating dummies in place of the removed ones.
+		// Reconstruct the displayed list of persons, creating dummies in place
+		// of the removed ones.
 
 		personHoldersReconstructed = new ArrayList<PersonHolder>();
 
@@ -166,7 +177,8 @@ public class AjaxFormLoopWithHolders1 {
 			boolean missing = true;
 
 			for (PersonHolder personHolderSubmitted : personHoldersSubmitted) {
-				if (personHolderSubmitted.getId().equals(personDisplayed.getId())) {
+				if (personHolderSubmitted.getId().equals(
+						personDisplayed.getId())) {
 					personHoldersReconstructed.add(personHolderSubmitted);
 					missing = false;
 					break;
@@ -174,10 +186,13 @@ public class AjaxFormLoopWithHolders1 {
 			}
 
 			if (missing) {
-				// Create a dummy person that won't fail field-level validation if we have to redisplay the list.
-				Person dummy = new Person("dummy", "dummy", Regions.EAST_COAST, new Date());
+				// Create a dummy person that won't fail field-level validation
+				// if we have to redisplay the list.
+				Person dummy = new Person("dummy", "dummy", Regions.EAST_COAST,
+						new Date());
 				// Add it the list, with "removed" flagged
-				PersonHolder ph = new PersonHolder(personDisplayed.getId(), personDisplayed.getVersion(), dummy, true);
+				PersonHolder ph = new PersonHolder(personDisplayed.getId(),
+						personDisplayed.getVersion(), dummy, true);
 				personHoldersReconstructed.add(ph);
 			}
 		}
@@ -189,7 +204,8 @@ public class AjaxFormLoopWithHolders1 {
 				boolean missing = true;
 
 				for (IdVersion personDisplayed : personsDisplayed) {
-					if (personDisplayed.getId().equals(personHolderSubmitted.getId())) {
+					if (personDisplayed.getId().equals(
+							personHolderSubmitted.getId())) {
 						missing = false;
 						break;
 					}
@@ -211,15 +227,16 @@ public class AjaxFormLoopWithHolders1 {
 		personsToChange = new ArrayList<Person>();
 		personsToDelete = new ArrayList<IdVersion>();
 
-		// Error if any original person has been deleted by someone else (ie. toValue(...) returned an empty person.
+		// Error if any original person has been deleted by someone else (ie.
+		// toValue(...) returned an empty person.
 
 		for (PersonHolder holder : personHoldersReconstructed) {
 			if (holder.getId() >= 0 && holder.getPerson().getId() == null) {
 				if (holder.isRemoved()) {
-					// You removed it and we can't tell if it was also deleted - no problem - the business layer will
+					// You removed it and we can't tell if it was also deleted -
+					// no problem - the business layer will
 					// detect it.
-				}
-				else {
+				} else {
 					form.recordError("The list of persons is out of date. Please refresh and try again.");
 					return;
 				}
@@ -231,23 +248,24 @@ public class AjaxFormLoopWithHolders1 {
 		for (PersonHolder holder : personHoldersReconstructed) {
 			if (holder.getId() > 0) {
 				if (holder.isRemoved()) {
-					personsToDelete.add(new IdVersion(holder.getId(), holder.getVersion()));
-				}
-				else {
+					personsToDelete.add(new IdVersion(holder.getId(), holder
+							.getVersion()));
+				} else {
 					personsToChange.add(holder.getPerson());
 				}
-			}
-			else {
+			} else {
 				if (!holder.isRemoved()) {
 					personsToCreate.add(holder.getPerson());
 				}
 			}
 		}
 
-		// Simulate a server-side validation error: return error if anyone's first name is BAD_NAME.
+		// Simulate a server-side validation error: return error if anyone's
+		// first name is BAD_NAME.
 
 		for (PersonHolder holder : personHoldersReconstructed) {
-			if (holder.getPerson().getFirstName() != null && holder.getPerson().getFirstName().equals(BAD_NAME)) {
+			if (holder.getPerson().getFirstName() != null
+					&& holder.getPerson().getFirstName().equals(BAD_NAME)) {
 				form.recordError("First name cannot be " + BAD_NAME + ".");
 				return;
 			}
@@ -257,11 +275,13 @@ public class AjaxFormLoopWithHolders1 {
 			System.out.println(">>> personsToCreate = " + personsToCreate);
 			System.out.println(">>> personsToChange = " + personsToChange);
 			System.out.println(">>> personsToDelete = " + personsToDelete);
-			// In a real application we would persist them to the database instead of printing them.
-			// personManagerService.bulkEditPersons(personsToCreate, personsToChange, personsToDelete);
-		}
-		catch (Exception e) {
-			// Display the cause. In a real system we would try harder to get a user-friendly message.
+			// In a real application we would persist them to the database
+			// instead of printing them.
+			// personManagerService.bulkEditPersons(personsToCreate,
+			// personsToChange, personsToDelete);
+		} catch (Exception e) {
+			// Display the cause. In a real system we would try harder to get a
+			// user-friendly message.
 			form.recordError(ExceptionUtil.getRootCauseMessage(e));
 			return;
 		}
@@ -277,9 +297,9 @@ public class AjaxFormLoopWithHolders1 {
 
 		if (request.isXHR()) {
 			return personsEditZone.getBody();
-		}
-		else {
-			// Not an AJAX request, so don't bother. Just refresh the screen and it will display "JavaScript required".
+		} else {
+			// Not an AJAX request, so don't bother. Just refresh the screen and
+			// it will display "JavaScript required".
 			return onRefresh();
 		}
 	}
@@ -290,13 +310,15 @@ public class AjaxFormLoopWithHolders1 {
 		return request.isXHR() ? personsEditZone.getBody() : null;
 	}
 
-	// The AjaxFormLoop component will automatically call this for every row as it is rendered.
+	// The AjaxFormLoop component will automatically call this for every row as
+	// it is rendered.
 
 	public PersonHolder getPersonHolder() {
 		return personHolder;
 	}
 
-	// The AjaxFormLoop component will automatically call this for every row on submit.
+	// The AjaxFormLoop component will automatically call this for every row on
+	// submit.
 
 	public void setPersonHolder(PersonHolder personHolder) {
 		this.personHolder = personHolder;
@@ -306,8 +328,10 @@ public class AjaxFormLoopWithHolders1 {
 		}
 	}
 
-	// We use PersonHolder to hold the person and any extra info we need. Its id field allows us to distinguish which persons 
-	// you have added and/or removed, and which persons we started with even if they have been deleted from the database by others.
+	// We use PersonHolder to hold the person and any extra info we need. Its id
+	// field allows us to distinguish which persons
+	// you have added and/or removed, and which persons we started with even if
+	// they have been deleted from the database by others.
 
 	public class PersonHolder {
 		private Long id;
@@ -370,8 +394,10 @@ public class AjaxFormLoopWithHolders1 {
 	}
 
 	// This encoder is used by our AjaxFormLoop:
-	// - during render, to convert each person holder to an id (AjaxFormLoop then stores the ids in the form, hidden).
-	// - during form submission, to convert each id back to a person holder which it puts in our personHolder field.
+	// - during render, to convert each person holder to an id (AjaxFormLoop
+	// then stores the ids in the form, hidden).
+	// - during form submission, to convert each id back to a person holder
+	// which it puts in our personHolder field.
 	// AjaxFormLoop will overwrite several fields of the person returned.
 
 	private class PersonHolderEncoder implements ValueEncoder<PersonHolder> {
@@ -389,23 +415,25 @@ public class AjaxFormLoopWithHolders1 {
 
 			if (id < 0) {
 				holder = new PersonHolder(id, null, new Person());
-			}
-			else {
+			} else {
 				holder = findPersonHolder(id);
 
-				// If person has since been deleted from the DB. Create a skeleton person holder.
+				// If person has since been deleted from the DB. Create a
+				// skeleton person holder.
 				if (holder == null) {
 					holder = new PersonHolder(id, null, new Person());
 				}
 			}
 
-			// AjaxFormLoop will overwrite several fields of the person holder returned.
+			// AjaxFormLoop will overwrite several fields of the person holder
+			// returned.
 			return holder;
 		}
 
 		private PersonHolder findPersonHolder(Long id) {
 
-			// If in submit, we could find the person in the database but it's cheaper to search the list we got in
+			// If in submit, we could find the person in the database but it's
+			// cheaper to search the list we got in
 			// onPrepareForSubmit().
 
 			if (inFormSubmission) {

@@ -14,7 +14,6 @@ import jumpstart.business.domain.person.iface.IPersonManagerServiceLocal;
 import jumpstart.util.ExceptionUtil;
 import jumpstart.web.commons.EvenOdd;
 
-import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
@@ -72,7 +71,7 @@ public class AjaxFormsInALoop {
 	@Inject
 	private AjaxResponseRenderer ajaxResponseRenderer;
 
-	@Component
+	@InjectComponent
 	private Form personForm;
 
 	@Inject
@@ -94,7 +93,8 @@ public class AjaxFormsInALoop {
 	void setupRender() {
 		loadingLoop = true;
 
-		// Get all persons - ask business service to find them (from the database)
+		// Get all persons - ask business service to find them (from the
+		// database)
 		persons = personFinderService.findPersons(MAX_RESULTS);
 
 		evenOdd = new EvenOdd();
@@ -102,14 +102,16 @@ public class AjaxFormsInALoop {
 
 	void onPrepareForRenderFromPersonForm(Long personId) {
 
-		// If the loop is being reloaded, the form may have had errors so clear them just in case.
+		// If the loop is being reloaded, the form may have had errors so clear
+		// them just in case.
 
 		if (loadingLoop) {
 			personForm.clearErrors();
 			editing = false;
 		}
 
-		// If the form is valid then we're not redisplaying due to error, so get the person.
+		// If the form is valid then we're not redisplaying due to error, so get
+		// the person.
 
 		if (personForm.isValid()) {
 			person = personFinderService.findPerson(personId);
@@ -123,7 +125,7 @@ public class AjaxFormsInALoop {
 		person = personFinderService.findPerson(personId);
 
 	}
-	
+
 	void onSelectedFromEdit() {
 		action = Actions.TO_EDIT;
 	}
@@ -135,33 +137,36 @@ public class AjaxFormsInALoop {
 	void onSelectedFromCancel() {
 		action = Actions.CANCEL;
 	}
-	
+
 	void onValidateFromPersonForm() {
 
 		if (action == Actions.SAVE) {
 
 			if (personForm.getHasErrors()) {
-				// We get here only if a server-side validator detected an error.
+				// We get here only if a server-side validator detected an
+				// error.
 				return;
 			}
 
-			// Simulate a server-side validation error: return error if anyone's first name is BAD_NAME.
+			// Simulate a server-side validation error: return error if anyone's
+			// first name is BAD_NAME.
 
-			if (person.getFirstName() != null && person.getFirstName().equals(BAD_NAME)) {
-				personForm.recordError("First name cannot be " + BAD_NAME + ".");
+			if (person.getFirstName() != null
+					&& person.getFirstName().equals(BAD_NAME)) {
+				personForm
+						.recordError("First name cannot be " + BAD_NAME + ".");
 				return;
 			}
 
 			try {
 				personManagerService.changePerson(person);
-			}
-			catch (Exception e) {
-				// Display the cause. In a real system we would try harder to get a user-friendly message.
+			} catch (Exception e) {
+				// Display the cause. In a real system we would try harder to
+				// get a user-friendly message.
 				personForm.recordError(ExceptionUtil.getRootCauseMessage(e));
 			}
 
-		}
-		else {
+		} else {
 			personForm.clearErrors();
 		}
 
@@ -186,13 +191,15 @@ public class AjaxFormsInALoop {
 	}
 
 	public String getCurrentRowZoneId() {
-		// The id attribute of a row must be the same every time that row asks for it and unique on the page.
+		// The id attribute of a row must be the same every time that row asks
+		// for it and unique on the page.
 		return "rowZone_" + person.getId();
 	}
 
 	public String getPersonRegion() {
 		// Follow the same naming convention that the Select component uses
-		return messages.get(Regions.class.getSimpleName() + "." + person.getRegion().name());
+		return messages.get(Regions.class.getSimpleName() + "."
+				+ person.getRegion().name());
 	}
 
 	public Format getDateFormat() {

@@ -11,7 +11,7 @@ import jumpstart.web.base.theapp.SimpleBasePage;
 
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.PersistenceConstants;
-import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.components.Form;
@@ -32,13 +32,14 @@ public class UserRoleEdit extends SimpleBasePage {
 
 	// Work fields
 
-	// This carries version through the redirect that follows a server-side validation failure.
+	// This carries version through the redirect that follows a server-side
+	// validation failure.
 	@Persist(PersistenceConstants.FLASH)
 	private Integer versionFlash;
 
 	// Generally useful bits and pieces
 
-	@Component(id = "form")
+	@InjectComponent
 	private Form form;
 
 	@EJB
@@ -67,7 +68,8 @@ public class UserRoleEdit extends SimpleBasePage {
 		// Handle null person in the template.
 
 		// If the form has errors then we're redisplaying after a redirect.
-		// Form will restore your input values but it's up to us to restore Hidden values.
+		// Form will restore your input values but it's up to us to restore
+		// Hidden values.
 
 		if (form.getHasErrors()) {
 			if (userRole != null) {
@@ -78,7 +80,7 @@ public class UserRoleEdit extends SimpleBasePage {
 
 	void onPrepareForSubmit() throws DoesNotExistException {
 		userRole = findUserRole(userRoleId);
-		
+
 		if (userRole == null) {
 			userRole = new UserRole();
 			form.recordError("User role has been deleted by another process.");
@@ -88,8 +90,7 @@ public class UserRoleEdit extends SimpleBasePage {
 	private UserRole findUserRole(Long userRoleId) {
 		try {
 			return securityFinderService.findUserRoleShallowish(userRoleId);
-		}
-		catch (DoesNotExistException e) {
+		} catch (DoesNotExistException e) {
 			// Handle null role in the template
 			return null;
 		}
@@ -98,8 +99,7 @@ public class UserRoleEdit extends SimpleBasePage {
 	void onValidateFromForm() {
 		try {
 			securityManagerService.changeUserRole(userRole);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			form.recordError(interpretBusinessServicesExceptionForChange(e));
 		}
 	}

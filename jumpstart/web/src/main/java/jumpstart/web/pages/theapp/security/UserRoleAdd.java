@@ -17,7 +17,7 @@ import jumpstart.web.model.app.select.UserIdSelectModel;
 
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.SelectModel;
-import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.components.Form;
@@ -31,7 +31,8 @@ public class UserRoleAdd extends SimpleBasePage {
 
 	private Long roleId;
 
-	// A link back to the caller - there are many possible callers so each caller must provide this.
+	// A link back to the caller - there are many possible callers so each
+	// caller must provide this.
 
 	@Persist
 	private Link returnTo;
@@ -44,7 +45,8 @@ public class UserRoleAdd extends SimpleBasePage {
 	@Property
 	private Role role;
 
-	// If the User and/or Role were not specified by the caller then we'll need them in lists for selection.
+	// If the User and/or Role were not specified by the caller then we'll need
+	// them in lists for selection.
 
 	@Property
 	private SelectModel userIdsModel;
@@ -65,17 +67,17 @@ public class UserRoleAdd extends SimpleBasePage {
 
 	// Useful bits and pieces
 
-	@Component(id = "form")
+	@InjectComponent
 	private Form form;
-	
+
 	@EJB
 	private ISecurityFinderServiceLocal securityFinderService;
-	
+
 	@EJB
 	private ISecurityManagerServiceLocal securityManagerService;
 
 	// The code
-	
+
 	public void set(Long userId, Long roleId, Link returnTo) {
 		this.userId = userId;
 		this.roleId = roleId;
@@ -138,8 +140,7 @@ public class UserRoleAdd extends SimpleBasePage {
 			Long roleId = this.roleId != null ? this.roleId : selectedRoleId;
 
 			securityManagerService.addUserRole(userId, roleId, userRole);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			form.recordError(interpretBusinessServicesExceptionForCreate(e));
 			return;
 		}
