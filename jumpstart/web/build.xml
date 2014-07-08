@@ -204,11 +204,6 @@
 		<get dest="${lib.runtime.dir}/commons-configuration-1.6.jar" usetimestamp="true" src="${maven.repo.root}/commons-configuration/commons-configuration/1.6/commons-configuration-1.6.jar" />
 		<get dest="${lib.runtime.dir}/commons-lang-2.6.jar" usetimestamp="true" src="${maven.repo.root}/commons-lang/commons-lang/2.6/commons-lang-2.6.jar" />
 		<!-- For tapestry-kaptcha -->
-		<!--
-		<get dest="${lib.runtime.dir}/kaptcha-2.3.jar" usetimestamp="true" src="https://nexus.sourcesense.com/nexus/content/repositories/public/com/google/code/kaptcha/2.3/kaptcha-2.3.jar" />				
-		<get dest="${lib.runtime.dir}/kaptcha-2.3.jar" usetimestamp="true" src="http://savant.inversoft.org/com/google/code/kaptcha/kaptcha/2.3/kaptcha-2.3.jar" />				
-		-->
-		<!-- For tapestry-kaptcha -->
 		<mkdir dir="${main.tmp.dir}"/>
 		<get dest="${main.tmp.dir}/kaptcha-2.3.2.zip" usetimestamp="true" src="http://kaptcha.googlecode.com/files/kaptcha-2.3.2.zip" />
 		<unzip dest="${main.tmp.dir}/kaptcha-2.3.2" src="${main.tmp.dir}/kaptcha-2.3.2.zip" />
