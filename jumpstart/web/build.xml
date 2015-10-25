@@ -221,11 +221,11 @@
 		<!-- For JNDI lookup -->
 		<get dest="${lib.test.dir}/dom4j-1.6.1.jar" usetimestamp="true" src="${maven.repo.root}/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar" />
 		<!-- For Jetty -->
-		<get dest="${lib.test.dir}/jetty-6.1.26.jar" usetimestamp="true" src="${maven.repo.root}/org/mortbay/jetty/jetty/6.1.26/jetty-6.1.26.jar" />
-		<get dest="${lib.test.dir}/jetty-util-6.1.26.jar" usetimestamp="true" src="${maven.repo.root}/org/mortbay/jetty/jetty-util/6.1.26/jetty-util-6.1.26.jar" />
+		<get dest="${lib.test.dir}/jetty-6.1.24.jar" usetimestamp="true" src="${maven.repo.root}/org/mortbay/jetty/jetty/6.1.24/jetty-6.1.24.jar" />
+		<get dest="${lib.test.dir}/jetty-util-6.1.24.jar" usetimestamp="true" src="${maven.repo.root}/org/mortbay/jetty/jetty-util/6.1.24/jetty-util-6.1.24.jar" />
 		<!-- For Jetty to provide an AJP Connector and JAAS 
-		<get dest="${lib.test.dir}/jetty-ajp-6.1.26.jar" usetimestamp="true" src="${maven.repo.root}/org/mortbay/jetty/jetty-ajp/6.1.26/jetty-ajp-6.1.26.jar" />
-		<get dest="${lib.test.dir}/jetty-plus-6.1.26.jar" usetimestamp="true" src="${maven.repo.root}/org/mortbay/jetty/jetty-plus/6.1.26/jetty-plus-6.1.26.jar" />
+		<get dest="${lib.test.dir}/jetty-ajp-6.1.24.jar" usetimestamp="true" src="${maven.repo.root}/org/mortbay/jetty/jetty-ajp/6.1.24/jetty-ajp-6.1.24.jar" />
+		<get dest="${lib.test.dir}/jetty-plus-6.1.24.jar" usetimestamp="true" src="${maven.repo.root}/org/mortbay/jetty/jetty-plus/6.1.24/jetty-plus-6.1.24.jar" />
 		-->
 		
 	</target>
