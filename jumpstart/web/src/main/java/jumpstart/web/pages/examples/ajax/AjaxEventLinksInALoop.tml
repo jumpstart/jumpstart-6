@@ -17,8 +17,7 @@
 		<form t:type="form" t:id="preferencesForm">
 			Highlight zone updates? 
 			 <input t:type="checkbox" t:id="highlightZoneUpdates" value="highlightZoneUpdates" onclick="this.form.submit()"/>
-			This shows you which zones are updated by the Ajax response. <br/>
-			Note that it upsets our hover highlighting due to <a href="https://issues.apache.org/jira/browse/TAP5-2014">TAP5-2014</a>.
+			This shows you which zones are updated by the Ajax response.
 		</form><br/>
 	
 		<table class="grid">

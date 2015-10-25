@@ -84,8 +84,7 @@
 
 	Notes:
 	<ul>
-	<li>There have been reports of "Add a row" failing following inactivity (see <a href="https://issues.apache.org/jira/browse/TAP5-733">TAP5-733</a>), 
-	and in another circumstance that might involve cookies (discussed
+	<li>There have been reports of "Add a row" failing in a circumstance that might involve cookies (discussed
 	<a href="http://tapestry.1045711.n5.nabble.com/Is-AjaxFormLoop-example-working-for-you-td2422439.html">here</a>).</li>
 	<li>During development: if you modify the template, the page sometimes fails with a type coercion problem. 
 		The problem should clear if you use the browser's reload button once or twice.</li> 
