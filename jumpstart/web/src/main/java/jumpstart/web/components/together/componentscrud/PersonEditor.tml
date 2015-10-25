@@ -11,7 +11,7 @@
 	<t:if test="modeCreate">
 		<h1>Create</h1>
 		
-		<form t:type="form" t:id="createForm" >
+		<form t:type="CustomForm" t:id="createForm" >
 			<t:errors/>
 	
 			<table>
@@ -108,7 +108,7 @@
 	<t:if test="modeUpdate">
 		<h1>Update</h1>
 		
-		<form t:type="form" t:id="updateForm">
+		<form t:type="CustomForm" t:id="updateForm">
 			<t:errors/>
 		
 			<t:if test="person">

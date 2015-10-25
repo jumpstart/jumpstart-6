@@ -25,45 +25,29 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.Request;
 
 /**
- * This component will trigger the following events on its container (which in
- * this example is the page):
- * {@link jumpstart.web.components.examples.ajax.gracefulcomponentscrud.PersonEditor#CANCEL_CREATE}
- * ,
- * {@link jumpstart.web.components.examples.ajax.gracefulcomponentscrud.PersonEditor#SUCCESSFUL_CREATE}
+ * This component will trigger the following events on its container (which in this example is the page):
+ * {@link jumpstart.web.components.examples.ajax.gracefulcomponentscrud.PersonEditor#CANCEL_CREATE} ,
+ * {@link jumpstart.web.components.examples.ajax.gracefulcomponentscrud.PersonEditor#SUCCESSFUL_CREATE} (Long personId),
+ * {@link jumpstart.web.components.examples.ajax.gracefulcomponentscrud.PersonEditor#FAILED_CREATE} ,
+ * {@link jumpstart.web.components.examples.ajax.gracefulcomponentscrud.PersonEditor#TO_UPDATE} (Long personId),
+ * {@link jumpstart.web.components.examples.ajax.gracefulcomponentscrud.PersonEditor#CANCEL_UPDATE} (Long personId),
+ * {@link jumpstart.web.components.examples.ajax.gracefulcomponentscrud.PersonEditor#SUCCESSFUL_UPDATE} (Long personId),
+ * {@link jumpstart.web.components.examples.ajax.gracefulcomponentscrud.PersonEditor#FAILED_UPDATE} (Long personId),
+ * personId), {@link jumpstart.web.components.examples.ajax.gracefulcomponentscrud.PersonEditor#SUCCESSFUL_DELETE} (Long
+ * personId), {@link jumpstart.web.components.examples.ajax.gracefulcomponentscrud.PersonEditor#FAILED_DELETE} (Long
+ * personId), {@link jumpstart.web.components.examples.ajax.gracefulcomponentscrud.PersonEditor#TO_CONFIRM_DELETE} (Long
+ * personId), {@link jumpstart.web.components.examples.ajax.gracefulcomponentscrud.PersonEditor#CANCEL_CONFIRM_DELETE}
  * (Long personId),
- * {@link jumpstart.web.components.examples.ajax.gracefulcomponentscrud.PersonEditor#FAILED_CREATE}
- * ,
- * {@link jumpstart.web.components.examples.ajax.gracefulcomponentscrud.PersonEditor#TO_UPDATE}
- * (Long personId),
- * {@link jumpstart.web.components.examples.ajax.gracefulcomponentscrud.PersonEditor#CANCEL_UPDATE}
- * (Long personId),
- * {@link jumpstart.web.components.examples.ajax.gracefulcomponentscrud.PersonEditor#SUCCESSFUL_UPDATE}
- * (Long personId),
- * {@link jumpstart.web.components.examples.ajax.gracefulcomponentscrud.PersonEditor#FAILED_UPDATE}
- * (Long personId), personId),
- * {@link jumpstart.web.components.examples.ajax.gracefulcomponentscrud.PersonEditor#SUCCESSFUL_DELETE}
- * (Long personId),
- * {@link jumpstart.web.components.examples.ajax.gracefulcomponentscrud.PersonEditor#FAILED_DELETE}
- * (Long personId),
- * {@link jumpstart.web.components.examples.ajax.gracefulcomponentscrud.PersonEditor#TO_CONFIRM_DELETE}
- * (Long personId),
- * {@link jumpstart.web.components.examples.ajax.gracefulcomponentscrud.PersonEditor#CANCEL_CONFIRM_DELETE}
- * (Long personId),
- * {@link jumpstart.web.components.examples.ajax.gracefulcomponentscrud.PersonEditor#SUCCESSFUL_CONFIRM_DELETE}
- * (Long personId),
- * {@link jumpstart.web.components.examples.ajax.gracefulcomponentscrud.PersonEditor#FAILED_CONFIRM_DELETE}
+ * {@link jumpstart.web.components.examples.ajax.gracefulcomponentscrud.PersonEditor#SUCCESSFUL_CONFIRM_DELETE} (Long
+ * personId), {@link jumpstart.web.components.examples.ajax.gracefulcomponentscrud.PersonEditor#FAILED_CONFIRM_DELETE}
  * (Long personId)
  */
 // @Events is applied to a component solely to document what events it may
 // trigger. It is not checked at runtime.
-@Events({ PersonEditor.CANCEL_CREATE, PersonEditor.SUCCESSFUL_CREATE,
-		PersonEditor.FAILED_CREATE, PersonEditor.TO_UPDATE,
-		PersonEditor.CANCEL_UPDATE, PersonEditor.SUCCESSFUL_UPDATE,
-		PersonEditor.FAILED_UPDATE, PersonEditor.SUCCESSFUL_DELETE,
-		PersonEditor.FAILED_DELETE, PersonEditor.TO_CONFIRM_DELETE,
-		PersonEditor.CANCEL_CONFIRM_DELETE,
-		PersonEditor.SUCCESSFUL_CONFIRM_DELETE,
-		PersonEditor.FAILED_CONFIRM_DELETE })
+@Events({ PersonEditor.CANCEL_CREATE, PersonEditor.SUCCESSFUL_CREATE, PersonEditor.FAILED_CREATE,
+		PersonEditor.TO_UPDATE, PersonEditor.CANCEL_UPDATE, PersonEditor.SUCCESSFUL_UPDATE, PersonEditor.FAILED_UPDATE,
+		PersonEditor.SUCCESSFUL_DELETE, PersonEditor.FAILED_DELETE, PersonEditor.TO_CONFIRM_DELETE,
+		PersonEditor.CANCEL_CONFIRM_DELETE, PersonEditor.SUCCESSFUL_CONFIRM_DELETE, PersonEditor.FAILED_CONFIRM_DELETE })
 public class PersonEditor {
 	public static final String CANCEL_CREATE = "cancelCreate";
 	public static final String SUCCESSFUL_CREATE = "successfulCreate";
@@ -79,8 +63,7 @@ public class PersonEditor {
 	public static final String SUCCESSFUL_CONFIRM_DELETE = "successfulConfirmDelete";
 	public static final String FAILED_CONFIRM_DELETE = "failedConfirmDelete";
 
-	private final String demoModeStr = System
-			.getProperty("jumpstart.demo-mode");
+	private final String demoModeStr = System.getProperty("jumpstart.demo-mode");
 
 	public enum Mode {
 		CREATE, REVIEW, UPDATE, CONFIRM_DELETE;
@@ -149,7 +132,8 @@ public class PersonEditor {
 			if (personId == null) {
 				person = null;
 				// Handle null person in the template.
-			} else {
+			}
+			else {
 				person = personFinderService.findPerson(personId);
 				// Handle null person in the template.
 			}
@@ -189,14 +173,14 @@ public class PersonEditor {
 		}
 
 		if (demoModeStr != null && demoModeStr.equals("true")) {
-			createForm
-					.recordError("Sorry, but Create is not allowed in Demo mode.");
+			createForm.recordError("Sorry, but Create is not allowed in Demo mode.");
 			return;
 		}
 
 		try {
 			person = personManagerService.createPerson(person);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			// Display the cause. In a real system we would try harder to get a
 			// user-friendly message.
 			createForm.recordError(ExceptionUtil.getRootCauseMessage(e));
@@ -212,8 +196,7 @@ public class PersonEditor {
 		// created, so we trigger new event
 		// "successfulCreate" with a parameter. It will bubble up because we
 		// don't have a handler method for it.
-		componentResources.triggerEvent(SUCCESSFUL_CREATE,
-				new Object[] { person.getId() }, null);
+		componentResources.triggerEvent(SUCCESSFUL_CREATE, new Object[] { person.getId() }, null);
 		// We don't want "success" to bubble up, so we return true to say we've
 		// handled it.
 		return true;
@@ -274,7 +257,8 @@ public class PersonEditor {
 				// Handle null person in the template.
 			}
 
-		} else {
+		}
+		else {
 			person = personFinderService.findPerson(personId);
 			// Handle null person in the template.
 
@@ -303,8 +287,7 @@ public class PersonEditor {
 
 		if (person == null) {
 			person = new Person();
-			updateForm
-					.recordError("Person has been deleted by another process.");
+			updateForm.recordError("Person has been deleted by another process.");
 		}
 	}
 
@@ -319,7 +302,8 @@ public class PersonEditor {
 
 		try {
 			personManagerService.changePerson(person);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			// Display the cause. In a real system we would try harder to get a
 			// user-friendly message.
 			updateForm.recordError(ExceptionUtil.getRootCauseMessage(e));
@@ -335,8 +319,7 @@ public class PersonEditor {
 		// updated, so we trigger new event
 		// "successfulUpdate" with a parameter. It will bubble up because we
 		// don't have a handler method for it.
-		componentResources.triggerEvent(SUCCESSFUL_UPDATE,
-				new Object[] { personId }, null);
+		componentResources.triggerEvent(SUCCESSFUL_UPDATE, new Object[] { personId }, null);
 		// We don't want "success" to bubble up, so we return true to say we've
 		// handled it.
 		return true;
@@ -351,8 +334,7 @@ public class PersonEditor {
 		// were trying to do, we trigger new event
 		// "failedUpdate". It will bubble up because we don't have a handler
 		// method for it.
-		componentResources.triggerEvent(FAILED_UPDATE,
-				new Object[] { personId }, null);
+		componentResources.triggerEvent(FAILED_UPDATE, new Object[] { personId }, null);
 		// We don't want "failure" to bubble up, so we return true to say we've
 		// handled it.
 		return true;
@@ -375,12 +357,14 @@ public class PersonEditor {
 
 			if (demoModeStr != null && demoModeStr.equals("true")) {
 				deleteMessage = "Sorry, but Delete is not allowed in Demo mode.";
-			} else {
+			}
+			else {
 
 				try {
 					personManagerService.deletePerson(personId, personVersion);
 					successfulDelete = true;
-				} catch (Exception e) {
+				}
+				catch (Exception e) {
 					// Display the cause. In a real system we would try harder
 					// to get a user-friendly message.
 					deleteMessage = ExceptionUtil.getRootCauseMessage(e);
@@ -391,13 +375,12 @@ public class PersonEditor {
 			if (successfulDelete) {
 				// Trigger new event "successfulDelete" (which in this example
 				// will bubble up to the page).
-				componentResources.triggerEvent(SUCCESSFUL_DELETE,
-						new Object[] { personId }, null);
-			} else {
+				componentResources.triggerEvent(SUCCESSFUL_DELETE, new Object[] { personId }, null);
+			}
+			else {
 				// Trigger new event "failedDelete" (which in this example will
 				// bubble up to the page).
-				componentResources.triggerEvent(FAILED_DELETE,
-						new Object[] { personId }, null);
+				componentResources.triggerEvent(FAILED_DELETE, new Object[] { personId }, null);
 			}
 		}
 
@@ -407,8 +390,7 @@ public class PersonEditor {
 		else {
 			// Trigger new event "toConfirmDelete" (which in this example will
 			// bubble up to the page).
-			componentResources.triggerEvent(TO_CONFIRM_DELETE,
-					new Object[] { personId }, null);
+			componentResources.triggerEvent(TO_CONFIRM_DELETE, new Object[] { personId }, null);
 		}
 
 		// We don't want "delete" to bubble up, so we return true to say we've
@@ -457,8 +439,7 @@ public class PersonEditor {
 
 		if (person == null) {
 			person = new Person();
-			confirmDeleteForm
-					.recordError("Person has already been deleted by another process.");
+			confirmDeleteForm.recordError("Person has already been deleted by another process.");
 		}
 	}
 
@@ -473,18 +454,17 @@ public class PersonEditor {
 		}
 
 		if (demoModeStr != null && demoModeStr.equals("true")) {
-			confirmDeleteForm
-					.recordError("Sorry, but Delete is not allowed in Demo mode.");
-		} else {
+			confirmDeleteForm.recordError("Sorry, but Delete is not allowed in Demo mode.");
+		}
+		else {
 
 			try {
-				personManagerService
-						.deletePerson(personId, person.getVersion());
-			} catch (Exception e) {
+				personManagerService.deletePerson(personId, person.getVersion());
+			}
+			catch (Exception e) {
 				// Display the cause. In a real system we would try harder to
 				// get a user-friendly message.
-				confirmDeleteForm.recordError(ExceptionUtil
-						.getRootCauseMessage(e));
+				confirmDeleteForm.recordError(ExceptionUtil.getRootCauseMessage(e));
 			}
 
 		}
@@ -500,8 +480,7 @@ public class PersonEditor {
 		// deleted, so we trigger new event
 		// "successfulDelete" with a parameter. It will bubble up because we
 		// don't have a handler method for it.
-		componentResources.triggerEvent(SUCCESSFUL_CONFIRM_DELETE,
-				new Object[] { person.getId() }, null);
+		componentResources.triggerEvent(SUCCESSFUL_CONFIRM_DELETE, new Object[] { person.getId() }, null);
 		// We don't want "success" to bubble up, so we return true to say we've
 		// handled it.
 		return true;
@@ -514,8 +493,7 @@ public class PersonEditor {
 		// were trying to do, we trigger new event
 		// "failedDelete". It will bubble up because we don't have a handler
 		// method for it.
-		componentResources.triggerEvent(FAILED_CONFIRM_DELETE,
-				new Object[] { person.getId() }, null);
+		componentResources.triggerEvent(FAILED_CONFIRM_DELETE, new Object[] { person.getId() }, null);
 		// We don't want "failure" to bubble up, so we return true to say we've
 		// handled it.
 		return true;
@@ -549,8 +527,7 @@ public class PersonEditor {
 
 	public String getPersonRegion() {
 		// Follow the same naming convention that the Select component uses
-		return messages.get(Regions.class.getSimpleName() + "."
-				+ person.getRegion().name());
+		return messages.get(Regions.class.getSimpleName() + "." + person.getRegion().name());
 	}
 
 	public String getDatePattern() {
