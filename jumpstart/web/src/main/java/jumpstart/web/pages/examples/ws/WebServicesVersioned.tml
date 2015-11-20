@@ -18,7 +18,7 @@
 	 	<a href="personsfind01?namefilter=a">PersonsFind01?namefilter=a</a><br/>
 	</div>
 	
-	For a more RESTful implementation try <a href="http://tynamo.org/tapestry-resteasy+guide">tapestry-resteasy</a>.<br/><br/>
+	For a more RESTful implementation try <a href="http://www.tynamo.org/tapestry-resteasy+guide">tapestry-resteasy</a>.<br/><br/>
 
 	References: 
 	<a href="http://en.wikipedia.org/wiki/Java_Architecture_for_XML_Binding">JAXB</a>, 
