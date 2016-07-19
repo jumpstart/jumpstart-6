@@ -14,7 +14,7 @@
 	Here we have added a "Refresh" link.
 	
 	<div class="eg">
-		<form t:id="personform">
+		<form t:type="form" t:id="personform">
 			<t:errors/>
 		
 			<div class="t-beaneditor">
